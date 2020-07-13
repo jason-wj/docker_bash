@@ -3,8 +3,8 @@
 MODE=$1
 STATE=$2
 
-# 项目名
-PROJECT_NAME=jeesite
+# 项目名(根据项目改，同时需要改掉docker-compose.yml中的flag)
+PROJECT_NAME=flag
 
 # 项目根路径
 ROOT_PATH=$(pwd)
@@ -15,12 +15,14 @@ RUN_PATH=${ROOT_PATH}
 
 # 外部触发指令
 # 用户级
+COMMAND_MONGO="mongo"
 COMMAND_MYSQL="mysql"
 COMMAND_TRACING="tracing"
 
 # container
-IMAGE_CONTAINER_MYSQL="jeesite-mysql"
-IMAGE_CONTAINER_TRACING="jeesite-tracing"
+IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-mongo"
+IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-mysql"
+IMAGE_CONTAINER_TRACING=${PROJECT_NAME}"-tracing"
 
 
 # 启动项目
@@ -41,6 +43,9 @@ function logs_state() {
         case ${STATE} in
         ${COMMAND_MYSQL})
             docker logs -f ${IMAGE_CONTAINER_MYSQL} --tail 10
+        ;;
+        ${COMMAND_MONGO})
+            docker logs -f ${IMAGE_CONTAINER_MONGO} --tail 10
         ;;
         ${COMMAND_TRACING})
             docker logs -f ${IMAGE_CONTAINER_TRACING} --tail 10
@@ -68,6 +73,9 @@ function start_one() {
     case $1 in
         ${COMMAND_MYSQL})
             IMAGE_CONTAINER_MYSQL=${IMAGE_CONTAINER_MYSQL} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/docker-compose.yml up -d ${IMAGE_CONTAINER_MYSQL}
+        ;;
+        ${COMMAND_MONGO})
+            IMAGE_CONTAINER_MONGO=${IMAGE_CONTAINER_MONGO} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/docker-compose.yml up -d ${IMAGE_CONTAINER_MONGO}
         ;;
         ${COMMAND_TRACING})
             IMAGE_CONTAINER_TRACING=${IMAGE_CONTAINER_TRACING} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/docker-compose.yml up -d ${IMAGE_CONTAINER_TRACING}
@@ -122,6 +130,10 @@ function release_one() {
         ${COMMAND_MYSQL})
             RUN_PATH=${ROOT_PATH} docker-compose stop ${IMAGE_CONTAINER_MYSQL}
             docker-compose rm -f ${IMAGE_CONTAINER_MYSQL}
+        ;;
+        ${COMMAND_MONGO})
+            RUN_PATH=${ROOT_PATH} docker-compose stop ${IMAGE_CONTAINER_MONGO}
+            docker-compose rm -f ${IMAGE_CONTAINER_MONGO}
         ;;
         ${COMMAND_TRACING})
             RUN_PATH=${ROOT_PATH} docker-compose stop ${IMAGE_CONTAINER_TRACING}
