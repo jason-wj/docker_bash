@@ -1,0 +1,33 @@
+version: '2.1'
+
+networks:
+  basic:
+
+services:
+#  全局-关系型数据库mysql
+  jeesite-mysql:
+    image: mysql:5.7
+    container_name: ${IMAGE_CONTAINER_MYSQL}
+    volumes:
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/data:/var/lib/mysql
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/conf:/etc/mysql/conf.d
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/init:/docker-entrypoint-initdb.d/
+    command:
+      --lower_case_table_names=1
+    environment:
+      - MYSQL_ROOT_PASSWORD=ll#20191113
+      - TZ=Asia/Shanghai
+    ports:
+      - 9906:3306
+    networks:
+      - basic
+
+  #  全局-关系型数据库mysql
+  jeesite-tracing:
+    image: registry.cn-shanghai.aliyuncs.com/qysoft_base/qywebsite_java_all_test
+    container_name: ${IMAGE_CONTAINER_TRACING}
+    ports:
+      - 3306:3306
+      - 8981:8980
+    networks:
+      - basic
