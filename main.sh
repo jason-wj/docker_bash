@@ -116,7 +116,7 @@ function release_all() {
     docker network prune -f
 }
 
-# 清理关闭一个容器
+# 清理关闭一个指定容器
 function release_one() {
     case $1 in
         ${COMMAND_MYSQL})
