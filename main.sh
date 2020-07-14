@@ -102,6 +102,9 @@ function release_all() {
     docker rm -f $(docker ps -a | awk '{ print $1}' | tail -n +2)
 
     docker volume ls -qf dangling=true
+    # 查看指定的volume
+    # docker inspect docker_orderer.example.com
+
     # 开始清理
     docker volume rm $(docker volume ls -qf dangling=true)
     # 删除为none的镜像
