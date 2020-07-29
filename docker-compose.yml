@@ -45,3 +45,11 @@ services:
       - 8981:8980
     networks:
       - basic
+
+  #  全局-缓存 memcached
+  flag-mem:
+    image: memcached:1.5
+    container_name: ${IMAGE_CONTAINER_MEM}
+    ports:
+      - 11211:11211
+    restart: always
