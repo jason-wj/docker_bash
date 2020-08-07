@@ -36,16 +36,6 @@ services:
     networks:
       - basic
 
-  #  全局-关系型数据库mysql
-  flag-tracing:
-    image: registry.cn-shanghai.aliyuncs.com/qysoft_base/qywebsite_java_all_test
-    container_name: ${IMAGE_CONTAINER_TRACING}
-    ports:
-      - 3306:3306
-      - 8981:8980
-    networks:
-      - basic
-
   #  全局-缓存 redis
   flag-redis:
     image: redis
