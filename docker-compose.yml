@@ -29,10 +29,10 @@ services:
     command:
       --lower_case_table_names=1
     environment:
-      - MYSQL_ROOT_PASSWORD=ll#20191113
+      - MYSQL_ROOT_PASSWORD=root
       - TZ=Asia/Shanghai
     ports:
-      - 9906:3306
+      - 3307:3306
     networks:
       - basic
 
