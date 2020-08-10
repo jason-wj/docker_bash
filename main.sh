@@ -8,7 +8,9 @@ PROJECT_NAME=flag
 
 # 项目根路径
 ROOT_PATH=$(pwd)
-echo ${DOCKER_COMPOSE_PATH}
+
+# docker-compose 文件名
+DOCKER_COMPOSE_FILE="docker-compose.yml"
 
 # 如果环境变量docker_compose所在目录不为空，则优先使用
 if [[ -n ${DOCKER_COMPOSE_PATH} ]]; then 
@@ -78,13 +80,13 @@ function start_one() {
     # 程序配置文件的正常读取是在该目录下进行的
     case $1 in
         ${COMMAND_MYSQL})
-            IMAGE_CONTAINER_MYSQL=${IMAGE_CONTAINER_MYSQL} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/docker-compose.yml up -d ${IMAGE_CONTAINER_MYSQL}
+            IMAGE_CONTAINER_MYSQL=${IMAGE_CONTAINER_MYSQL} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MYSQL}
         ;;
         ${COMMAND_MONGO})
-            IMAGE_CONTAINER_MONGO=${IMAGE_CONTAINER_MONGO} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/docker-compose.yml up -d ${IMAGE_CONTAINER_MONGO}
+            IMAGE_CONTAINER_MONGO=${IMAGE_CONTAINER_MONGO} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MONGO}
         ;;
         ${COMMAND_REDIS})
-            IMAGE_CONTAINER_REDIS=${IMAGE_CONTAINER_REDIS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/docker-compose.yml up -d ${IMAGE_CONTAINER_REDIS}
+            IMAGE_CONTAINER_REDIS=${IMAGE_CONTAINER_REDIS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_REDIS}
         ;;
     esac
 }
@@ -137,20 +139,20 @@ function release_all() {
 function release_one() {
     case $1 in
         ${COMMAND_MYSQL})
-            RUN_PATH=${ROOT_PATH} docker-compose stop ${IMAGE_CONTAINER_MYSQL}
-            docker-compose rm -f ${IMAGE_CONTAINER_MYSQL}
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MYSQL}
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MYSQL}
         ;;
         ${COMMAND_MONGO})
-            RUN_PATH=${ROOT_PATH} docker-compose stop ${IMAGE_CONTAINER_MONGO}
-            docker-compose rm -f ${IMAGE_CONTAINER_MONGO}
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MONGO}
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MONGO}
         ;;
         ${COMMAND_REDIS})
-            RUN_PATH=${ROOT_PATH} docker-compose stop ${IMAGE_CONTAINER_REDIS}
-            docker-compose rm -f ${IMAGE_CONTAINER_REDIS}
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_REDIS}
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_REDIS}
         ;;
         *)
-            RUN_PATH=${ROOT_PATH} docker-compose stop $1
-            docker-compose rm -f $1
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop $1
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f $1
             docker rmi -f $1
             exit 1
     esac
