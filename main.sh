@@ -8,6 +8,12 @@ PROJECT_NAME=flag
 
 # 项目根路径
 ROOT_PATH=$(pwd)
+echo ${DOCKER_COMPOSE_PATH}
+
+# 如果环境变量docker_compose所在目录不为空，则优先使用
+if [[ -n ${DOCKER_COMPOSE_PATH} ]]; then 
+    ROOT_PATH=${DOCKER_COMPOSE_PATH}
+fi
 
 # docker和项目文件映射地址
 RUN_PATH=${ROOT_PATH}
