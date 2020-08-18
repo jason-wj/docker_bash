@@ -49,3 +49,25 @@ services:
       - basic
     command:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
+
+    #  消息队列
+    # 4369 -- erlang发现口
+    # 5672 -- client端通信口
+    # 15672 -- 管理界面ui端口
+    # 25672 -- server间内部通信口
+  flag-mq:
+    hostname: localhost
+    container_name: ${IMAGE_CONTAINER_MQ}
+    environment:
+      RABBITMQ_DEFAULT_VHOST: "test"
+      RABBITMQ_DEFAULT_USER: "root"
+      RABBITMQ_DEFAULT_PASS: "root"
+    image: rabbitmq
+    volumes:
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/data:/var/lib/rabbitmq"
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/log:/var/log/rabbitmq/log
+    ports:
+      - 15672:15672
+      - 4369:4369
+      - 5672:5672
+      - 25672:25672

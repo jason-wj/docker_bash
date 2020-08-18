@@ -26,11 +26,13 @@ RUN_PATH=${ROOT_PATH}
 COMMAND_MONGO="mongo"
 COMMAND_MYSQL="mysql"
 COMMAND_REDIS="redis"
+COMMAND_MQ="mq"
 
 # container
 IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
 IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${COMMAND_MYSQL}
 IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${COMMAND_REDIS}
+IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${COMMAND_MQ}
 
 
 # 启动项目
@@ -57,6 +59,9 @@ function logs_state() {
         ;;
         ${COMMAND_REDIS})
             docker logs -f ${IMAGE_CONTAINER_REDIS} --tail 10
+        ;;
+        ${COMMAND_MQ})
+            docker logs -f ${IMAGE_CONTAINER_MQ} --tail 10
         ;;
         *)
             docker logs -f $1 --tail 10
@@ -87,6 +92,9 @@ function start_one() {
         ;;
         ${COMMAND_REDIS})
             IMAGE_CONTAINER_REDIS=${IMAGE_CONTAINER_REDIS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_REDIS}
+        ;;
+        ${COMMAND_MQ})
+            IMAGE_CONTAINER_MQ=${IMAGE_CONTAINER_MQ} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MQ}
         ;;
     esac
 }
@@ -150,6 +158,10 @@ function release_one() {
             RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_REDIS}
             docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_REDIS}
         ;;
+        ${COMMAND_MQ})
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MQ}
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MQ}
+        ;;
         *)
             RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop $1
             docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f $1
@@ -162,14 +174,14 @@ function printHelp() {
     echo "./main.sh start [+操作码]：启动服务"
     echo "          [操作码]"
     echo "               all：启动所有服务"
-    echo "               指定服务：启动指定服务,当前支持[mysql,redis]"
+    echo "               指定服务：启动指定服务,当前支持[mysql,redis,mongo,mq]"
     echo "./main.sh logs [+操作码]：查看日志"
     echo "          [操作码]"
-    echo "               指定服务：查看指定日志,当前支持[mysql,redis]"
+    echo "               指定服务：查看指定日志,当前支持[mysql,redis,mongo,mq]"
     echo "./main.sh release [+操作码]：用于释放项目和其余容器"
     echo "          [操作码]"
     echo "               all：释放项目所有内容，包括各种容器"
-    echo "               指定容器名：释放指定容器，主要是用来释放项目所在的容器,当前支持[mysql,redis]"
+    echo "               指定容器名：释放指定容器，主要是用来释放项目所在的容器,当前支持[mysql,redis,mongo,mq]"
     echo "其余操作将触发此说明"
 }
 
