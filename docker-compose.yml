@@ -56,7 +56,7 @@ services:
     # 15672 -- 管理界面ui端口
     # 25672 -- server间内部通信口，集群之间
   flag-mq:
-    hostname: root
+    hostname: localhost
     container_name: ${IMAGE_CONTAINER_MQ}
     environment:
       RABBITMQ_DEFAULT_VHOST: "/test"
