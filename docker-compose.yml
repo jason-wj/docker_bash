@@ -56,18 +56,24 @@ services:
     # 15672 -- 管理界面ui端口
     # 25672 -- server间内部通信口
   flag-mq:
-    hostname: localhost
+    hostname: root
     container_name: ${IMAGE_CONTAINER_MQ}
     environment:
       RABBITMQ_DEFAULT_VHOST: "test"
       RABBITMQ_DEFAULT_USER: "root"
       RABBITMQ_DEFAULT_PASS: "root"
-    image: rabbitmq
+    image: rabbitmq:3.8.3-management
     volumes:
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/data:/var/lib/rabbitmq"
+#      windows下需要映射到当前windows用户的文件目录下，比如：C:\Users\${username}，未避免影响到开发，这里将该映射关闭，生产时，Linux下一定要开启
+#      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/data:/var/lib/rabbitmq
       - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/log:/var/log/rabbitmq/log
     ports:
       - 15672:15672
       - 4369:4369
       - 5672:5672
       - 25672:25672
+#    command:
+#      - /bin/bash
+#      - -c
+#      - |
+#        rabbitmq-plugins enable rabbitmq_management
