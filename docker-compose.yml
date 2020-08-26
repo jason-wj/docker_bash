@@ -50,6 +50,20 @@ services:
     command:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
+  #  ipfs单节点
+  flag-ipfs:
+    image: ipfs/go-ipfs:latest
+    container_name: ${IMAGE_CONTAINER_IPFS}
+    volumes:
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_IPFS}/export:/export:rw
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_IPFS}/data:/data/ipfs:rw
+    ports:
+      - 4001:4001
+      - 5001:5001
+      - 8081:8080
+    networks:
+      - basic
+
     #  消息队列
     # 4369 -- erlang发现口
     # 5672 -- client端通信口

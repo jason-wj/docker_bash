@@ -13,7 +13,7 @@ ROOT_PATH=$(pwd)
 DOCKER_COMPOSE_FILE="docker-compose.yml"
 
 # 如果环境变量docker_compose所在目录不为空，则优先使用
-if [[ -n ${DOCKER_COMPOSE_PATH} ]]; then 
+if [[ -n ${DOCKER_COMPOSE_PATH} ]]; then
     ROOT_PATH=${DOCKER_COMPOSE_PATH}
 fi
 
@@ -27,12 +27,14 @@ COMMAND_MONGO="mongo"
 COMMAND_MYSQL="mysql"
 COMMAND_REDIS="redis"
 COMMAND_MQ="mq"
+COMMAND_IPFS="ipfs"
 
 # container
 IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
 IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${COMMAND_MYSQL}
 IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${COMMAND_REDIS}
 IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${COMMAND_MQ}
+IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${COMMAND_IPFS}
 
 
 # 启动项目
@@ -62,6 +64,9 @@ function logs_state() {
         ;;
         ${COMMAND_MQ})
             docker logs -f ${IMAGE_CONTAINER_MQ} --tail 10
+        ;;
+        ${COMMAND_IPFS})
+            docker logs -f ${IMAGE_CONTAINER_IPFS} --tail 10
         ;;
         *)
             docker logs -f $1 --tail 10
@@ -95,6 +100,9 @@ function start_one() {
         ;;
         ${COMMAND_MQ})
             IMAGE_CONTAINER_MQ=${IMAGE_CONTAINER_MQ} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MQ}
+        ;;
+        ${COMMAND_IPFS})
+            IMAGE_CONTAINER_IPFS=${IMAGE_CONTAINER_IPFS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_IPFS}
         ;;
     esac
 }
@@ -161,6 +169,10 @@ function release_one() {
         ${COMMAND_MQ})
             RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MQ}
             docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MQ}
+        ;;
+        ${COMMAND_IPFS})
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_IPFS}
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_IPFS}
         ;;
         *)
             RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop $1
