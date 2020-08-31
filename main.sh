@@ -6,6 +6,9 @@ STATE=$2
 # 项目名(根据项目改，同时需要改掉docker-compose.yml中的flag)
 PROJECT_NAME=flag
 
+# 项目模式：开发-dev、生产-prod
+PROJECT_MODE=prod
+
 # 项目根路径
 ROOT_PATH=$(pwd)
 
@@ -20,6 +23,13 @@ fi
 # docker和项目文件映射地址
 RUN_PATH=${ROOT_PATH}
 
+# 容器版本
+IMAGE_MONGO="mongo"
+IMAGE_MYSQL="mysql:5.7"
+IMAGE_REDIS="redis"
+IMAGE_JEEFREE="java:8"
+IMAGE_IPFS="ipfs/go-ipfs:latest"
+IMAGE_MQ="rabbitmq:3.8.3-management"
 
 # 外部触发指令
 # 用户级
@@ -46,6 +56,11 @@ DOCKER_PASSWORD=xxx
 PUSH_ROOT_REGISTRY=registry.cn-hangzhou.aliyuncs.com
 PUSH_IMAGE_CONTAINER_JEEFREE=${PUSH_ROOT_REGISTRY}/jeefree/jeefree-admin
 
+# 根据不同项目模式切换参数
+if [[ ${PROJECT_MODE} == "prod" ]]; then
+  IMAGE_JEEFREE=${PUSH_IMAGE_CONTAINER_JEEFREE}
+  docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
+fi
 
 # 启动项目
 function start_state() {
@@ -109,22 +124,22 @@ function start_one() {
     # 程序配置文件的正常读取是在该目录下进行的
     case $1 in
         ${COMMAND_MYSQL})
-            IMAGE_CONTAINER_MYSQL=${IMAGE_CONTAINER_MYSQL} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MYSQL}
+            IMAGE_MYSQL=${IMAGE_MYSQL} IMAGE_CONTAINER_MYSQL=${IMAGE_CONTAINER_MYSQL} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MYSQL}
         ;;
         ${COMMAND_MONGO})
-            IMAGE_CONTAINER_MONGO=${IMAGE_CONTAINER_MONGO} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MONGO}
+            IMAGE_MONGO=${IMAGE_MONGO} IMAGE_CONTAINER_MONGO=${IMAGE_CONTAINER_MONGO} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MONGO}
         ;;
         ${COMMAND_REDIS})
-            IMAGE_CONTAINER_REDIS=${IMAGE_CONTAINER_REDIS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_REDIS}
+            IMAGE_REDIS=${IMAGE_REDIS} IMAGE_CONTAINER_REDIS=${IMAGE_CONTAINER_REDIS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_REDIS}
         ;;
         ${COMMAND_MQ})
-            IMAGE_CONTAINER_MQ=${IMAGE_CONTAINER_MQ} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MQ}
+            IMAGE_MQ=${IMAGE_MQ} IMAGE_CONTAINER_MQ=${IMAGE_CONTAINER_MQ} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MQ}
         ;;
         ${COMMAND_IPFS})
-            IMAGE_CONTAINER_IPFS=${IMAGE_CONTAINER_IPFS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_IPFS}
+            IMAGE_IPFS=${IMAGE_IPFS} IMAGE_CONTAINER_IPFS=${IMAGE_CONTAINER_IPFS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_IPFS}
         ;;
         ${COMMAND_JEEFREE})
-            IMAGE_CONTAINER_JEEFREE=${IMAGE_CONTAINER_JEEFREE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_JEEFREE}
+            IMAGE_JEEFREE=${IMAGE_JEEFREE} IMAGE_CONTAINER_JEEFREE=${IMAGE_CONTAINER_JEEFREE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_JEEFREE}
         ;;
     esac
 }
@@ -210,7 +225,6 @@ function release_one() {
 
 # 发布一个项目docker到仓库
 function push_one() {
-    docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
     case $1 in
         ${COMMAND_JEEFREE})
             docker tag ${IMAGE_CONTAINER_JEEFREE} ${PUSH_IMAGE_CONTAINER_JEEFREE}
