@@ -28,6 +28,7 @@ COMMAND_MYSQL="mysql"
 COMMAND_REDIS="redis"
 COMMAND_MQ="mq"
 COMMAND_IPFS="ipfs"
+COMMAND_JEEFREE="jeefree"
 
 # container
 IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
@@ -35,6 +36,15 @@ IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${COMMAND_MYSQL}
 IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${COMMAND_REDIS}
 IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${COMMAND_MQ}
 IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${COMMAND_IPFS}
+IMAGE_CONTAINER_JEEFREE=${PROJECT_NAME}"-"${COMMAND_JEEFREE}
+
+# 镜像上传的账号和密码
+DOCKER_USERNAME=xxx@xxx.xxx
+DOCKER_PASSWORD=xxx
+
+# 镜像推送名称
+PUSH_ROOT_REGISTRY=registry.cn-hangzhou.aliyuncs.com
+PUSH_IMAGE_CONTAINER_JEEFREE=${PUSH_ROOT_REGISTRY}/jeefree/jeefree-admin
 
 
 # 启动项目
@@ -43,10 +53,18 @@ function start_state() {
     if [[ ${STATE} == "" ]]; then
         printHelp
         exit 1
-    elif [[ ${STATE} == "all" ]]; then
-        start_all
     else
         start_one ${STATE}
+    fi
+}
+
+# 推送发布项目
+function push_state() {
+    if [[ ${STATE} == "" ]]; then
+        printHelp
+        exit 1
+    else
+        push_one ${STATE}
     fi
 }
 
@@ -68,6 +86,9 @@ function logs_state() {
         ${COMMAND_IPFS})
             docker logs -f ${IMAGE_CONTAINER_IPFS} --tail 10
         ;;
+        ${COMMAND_JEEFREE})
+            docker logs -f ${IMAGE_CONTAINER_JEEFREE} --tail 10
+        ;;
         *)
             docker logs -f $1 --tail 10
     esac
@@ -78,8 +99,6 @@ function start() {
     if [[ ${STATE} == "" ]]; then
         printHelp
         exit 1
-    elif [[ ${STATE} == "all" ]]; then
-        start_all
     else
         start_one "${STATE}"
     fi
@@ -103,6 +122,9 @@ function start_one() {
         ;;
         ${COMMAND_IPFS})
             IMAGE_CONTAINER_IPFS=${IMAGE_CONTAINER_IPFS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_IPFS}
+        ;;
+        ${COMMAND_JEEFREE})
+            IMAGE_CONTAINER_JEEFREE=${IMAGE_CONTAINER_JEEFREE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_JEEFREE}
         ;;
     esac
 }
@@ -174,10 +196,29 @@ function release_one() {
             RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_IPFS}
             docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_IPFS}
         ;;
+        ${COMMAND_JEEFREE})
+            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_JEEFREE}
+            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_JEEFREE}
+        ;;
         *)
             RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop $1
             docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f $1
             docker rmi -f $1
+            exit 1
+    esac
+}
+
+# 发布一个项目docker到仓库
+function push_one() {
+    docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
+    case $1 in
+        ${COMMAND_JEEFREE})
+            docker tag ${IMAGE_CONTAINER_JEEFREE} ${PUSH_IMAGE_CONTAINER_JEEFREE}
+            docker push ${PUSH_IMAGE_CONTAINER_JEEFREE}
+            docker rmi -f ${PUSH_IMAGE_CONTAINER_JEEFREE}
+        ;;
+        *)
+            printHelp
             exit 1
     esac
 }
@@ -203,6 +244,8 @@ case ${MODE} in
         start_state ;;
     "logs")
         logs_state ;;
+    "push")
+        push_state ;;
     "release")
         release_state ;;
     *)

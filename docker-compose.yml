@@ -51,6 +51,21 @@ services:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
   #  ipfs单节点
+  flag-jeefree:
+    image: java:8
+    container_name: ${IMAGE_CONTAINER_JEEFREE}
+    volumes:
+      - $RUN_PATH/data-server/${IMAGE_CONTAINER_JEEFREE}/app:/app:rw
+    ports:
+      - 8081:8080
+    working_dir: /app
+    command:
+#      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=host.docker.internal --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:3306/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
+      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=flag-redis --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
+    networks:
+      - basic
+
+  #  ipfs单节点
   flag-ipfs:
     image: ipfs/go-ipfs:latest
     container_name: ${IMAGE_CONTAINER_IPFS}
