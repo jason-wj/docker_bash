@@ -9,8 +9,8 @@ services:
     image: ${IMAGE_MONGO}
     container_name: ${IMAGE_CONTAINER_MONGO}
     volumes:
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MONGO}/db:/data/db
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MONGO}/conf:/data/configdb
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MONGO}/db:/data/db
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MONGO}/conf:/data/configdb
     command: --wiredTigerCacheSizeGB 3
     ports:
       - 9091:27017
@@ -23,9 +23,9 @@ services:
     image: ${IMAGE_MYSQL}
     container_name: ${IMAGE_CONTAINER_MYSQL}
     volumes:
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/data:/var/lib/mysql
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/conf:/etc/mysql/conf.d
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/init:/docker-entrypoint-initdb.d/
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/data:/var/lib/mysql
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/conf:/etc/mysql/conf.d
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MYSQL}/init:/docker-entrypoint-initdb.d/
     command:
       --lower_case_table_names=1
     environment:
@@ -41,8 +41,8 @@ services:
     image: ${IMAGE_REDIS}
     container_name: ${IMAGE_CONTAINER_REDIS}
     volumes:
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_REDIS}/conf/redis.conf:/etc/redis/redis.conf:rw
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_REDIS}/data:/data:rw
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_REDIS}/conf/redis.conf:/etc/redis/redis.conf:rw
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_REDIS}/data:/data:rw
     ports:
       - 6379:6379
     networks:
@@ -55,7 +55,7 @@ services:
     image: ${IMAGE_JEEFREE}
     container_name: ${IMAGE_CONTAINER_JEEFREE}
     volumes:
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_JEEFREE}/app:/app:rw
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_JEEFREE}/app:/app:rw
     ports:
       - 8081:8080
     working_dir: /app
@@ -70,8 +70,8 @@ services:
     image: ${IMAGE_IPFS}
     container_name: ${IMAGE_CONTAINER_IPFS}
     volumes:
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_IPFS}/export:/export:rw
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_IPFS}/data:/data/ipfs:rw
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_IPFS}/export:/export:rw
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_IPFS}/data:/data/ipfs:rw
     ports:
       - 4001:4001
       - 5001:5001
@@ -94,8 +94,8 @@ services:
     image: ${IMAGE_MQ}
     volumes:
 #      windows下需要映射到当前windows用户的文件目录下，比如：C:\Users\${username}，未避免影响到开发，这里将该映射关闭，生产时，Linux下一定要开启
-#      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/data:/var/lib/rabbitmq
-      - $RUN_PATH/data-server/${IMAGE_CONTAINER_MQ}/log:/var/log/rabbitmq/log
+#      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MQ}/data:/var/lib/rabbitmq
+      - $ROOT_PATH/data-server/${IMAGE_CONTAINER_MQ}/log:/var/log/rabbitmq/log
     ports:
       - 15672:15672
       - 4369:4369

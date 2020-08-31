@@ -13,19 +13,16 @@ PROJECT_MODE=dev
 DOCKER_USERNAME=xxx@xxx.xxx
 DOCKER_PASSWORD=xxx
 
-# 项目根路径
-ROOT_PATH=$(pwd)
-
 # docker-compose 文件名
 DOCKER_COMPOSE_FILE="docker-compose.yml"
+
+# 项目根路径
+ROOT_PATH=$(pwd)
 
 # 如果环境变量docker_compose所在目录不为空，则优先使用
 if [[ -n ${DOCKER_COMPOSE_PATH} ]]; then
     ROOT_PATH=${DOCKER_COMPOSE_PATH}
 fi
-
-# docker和项目文件映射地址
-RUN_PATH=${ROOT_PATH}
 
 # 外部触发指令
 # 用户级
@@ -45,7 +42,7 @@ IMAGE_IPFS="ipfs/go-ipfs:latest"
 IMAGE_MQ="rabbitmq:3.8.3-management"
 
 # 镜像推送名称
-PUSH_ROOT_REGISTRY=registry.cn-hangzhou.aliyuncs.com
+PUSH_ROOT_REGISTRY="registry.cn-hangzhou.aliyuncs.com"
 
 # 根据不同项目模式切换参数
 if [[ ${PROJECT_MODE} == "prod" ]]; then
@@ -70,22 +67,22 @@ function start_one() {
     # 程序配置文件的正常读取是在该目录下进行的
     case ${STATE} in
         ${COMMAND_MYSQL})
-            IMAGE_MYSQL=${IMAGE_MYSQL} IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_MYSQL=${IMAGE_MYSQL} IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_MONGO})
-            IMAGE_MONGO=${IMAGE_MONGO} IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_MONGO=${IMAGE_MONGO} IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_REDIS})
-            IMAGE_REDIS=${IMAGE_REDIS} IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_REDIS=${IMAGE_REDIS} IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_MQ})
-            IMAGE_MQ=${IMAGE_MQ} IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_MQ=${IMAGE_MQ} IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_IPFS})
-            IMAGE_IPFS=${IMAGE_IPFS} IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_IPFS=${IMAGE_IPFS} IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_JEEFREE})
-            IMAGE_JEEFREE=${IMAGE_JEEFREE} IMAGE_CONTAINER_JEEFREE=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_JEEFREE=${IMAGE_JEEFREE} IMAGE_CONTAINER_JEEFREE=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         *)
             printHelp
@@ -121,12 +118,8 @@ function release_all() {
     docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | xargs docker rmi
 
     # 该指令默认会清除所有如下资源：
-    #
-    # 已停止的容器（container）
-    # 未被任何容器所使用的卷（volume）
-    # 未被任何容器所关联的网络（network）
-    # 所有悬空镜像（image）。
-    #该指令默认只会清除悬空镜像，未被使用的镜像不会被删除。添加-a 或 --all参数后，可以一并清除所有未使用的镜像和悬空镜像。
+    # 已停止的容器（container）、未被任何容器所使用的卷（volume）、未被任何容器所关联的网络（network）、所有悬空镜像（image）。
+    # 该指令默认只会清除悬空镜像，未被使用的镜像不会被删除。添加-a 或 --all参数后，可以一并清除所有未使用的镜像和悬空镜像。
     docker system prune -f
 
     # 删除无用的卷
@@ -138,7 +131,7 @@ function release_all() {
 
 # 清理关闭一个指定容器
 function release_one() {
-  RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${PROJECT_NAME}"-"$1
+  ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${PROJECT_NAME}"-"$1
   docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${PROJECT_NAME}"-"$1
 }
 
