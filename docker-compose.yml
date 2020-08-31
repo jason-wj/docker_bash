@@ -72,7 +72,7 @@ services:
     container_name: ${CONTAINER_JEEFREEUI}
     volumes:
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf.d:/etc/nginx/conf.d:rw
-      - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf:/etc/nginx/nginx.conf:rw
+#      - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf:/etc/nginx/nginx.conf:rw
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/log:/var/log/nginx:rw
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/www:/usr/share/nginx/html:rw
     ports:
