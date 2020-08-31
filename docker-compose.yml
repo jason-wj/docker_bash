@@ -66,7 +66,7 @@ services:
       - basic
 
   # jeefree ui 后台管理页面
-  # 注意：volumes中的conf.d需要设置配置文件时再开放
+  # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
   myflag-jeefreeui:
     image: ${IMAGE_JEEFREEUI}
     container_name: ${CONTAINER_JEEFREEUI}
