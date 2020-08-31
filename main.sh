@@ -32,21 +32,23 @@ COMMAND_REDIS="redis"
 COMMAND_MQ="mq"
 COMMAND_IPFS="ipfs"
 COMMAND_JEEFREE="jeefree"
+COMMAND_JEEFREEUI="jeefreeui"
 
 # 容器版本
 IMAGE_MONGO="mongo"
 IMAGE_MYSQL="mysql:5.7"
 IMAGE_REDIS="redis"
-IMAGE_JEEFREE="java:8"
 IMAGE_IPFS="ipfs/go-ipfs:latest"
 IMAGE_MQ="rabbitmq:3.8.3-management"
+IMAGE_JEEFREE="java:8"
+IMAGE_JEEFREEUI="nginx"
 
 # 镜像推送名称
 PUSH_ROOT_REGISTRY="registry.cn-hangzhou.aliyuncs.com"
 
 # 根据不同项目模式切换参数
 if [[ ${PROJECT_MODE} == "prod" ]]; then
-  IMAGE_JEEFREE=${PUSH_IMAGE_CONTAINER_JEEFREE}
+  IMAGE_JEEFREE=${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
   docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
 fi
 
@@ -67,22 +69,25 @@ function start_one() {
     # 程序配置文件的正常读取是在该目录下进行的
     case ${STATE} in
         ${COMMAND_MYSQL})
-            IMAGE_MYSQL=${IMAGE_MYSQL} IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_MYSQL=${IMAGE_MYSQL} CONTAINER_MYSQL=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_MONGO})
-            IMAGE_MONGO=${IMAGE_MONGO} IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_MONGO=${IMAGE_MONGO} CONTAINER_MONGO=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_REDIS})
-            IMAGE_REDIS=${IMAGE_REDIS} IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_REDIS=${IMAGE_REDIS} CONTAINER_REDIS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_MQ})
-            IMAGE_MQ=${IMAGE_MQ} IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_MQ=${IMAGE_MQ} CONTAINER_MQ=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_IPFS})
-            IMAGE_IPFS=${IMAGE_IPFS} IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_IPFS=${IMAGE_IPFS} CONTAINER_IPFS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_JEEFREE})
-            IMAGE_JEEFREE=${IMAGE_JEEFREE} IMAGE_CONTAINER_JEEFREE=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+            IMAGE_JEEFREE=${IMAGE_JEEFREE} CONTAINER_JEEFREE=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+        ;;
+        ${COMMAND_JEEFREEUI})
+            IMAGE_JEEFREEUI=${IMAGE_JEEFREEUI} CONTAINER_JEEFREEUI=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         *)
             printHelp
