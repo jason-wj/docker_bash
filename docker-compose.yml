@@ -76,7 +76,7 @@ services:
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/log:/var/log/nginx:rw
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/www:/usr/share/nginx/html:rw
     ports:
-      - 1024:80
+      - 8082:80
       - 443:443
 
   #  ipfs单节点
