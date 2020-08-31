@@ -3,11 +3,15 @@
 MODE=$1
 STATE=$2
 
-# 项目名(根据项目改，同时需要改掉docker-compose.yml中的flag)
-PROJECT_NAME=flag
+# 项目名(根据项目改，同时需要改掉docker-compose.yml中的myflag)
+PROJECT_NAME=myflag
 
 # 项目模式：开发-dev、生产-prod
-PROJECT_MODE=prod
+PROJECT_MODE=dev
+
+# 镜像上传的账号和密码
+DOCKER_USERNAME=xxx@xxx.xxx
+DOCKER_PASSWORD=xxx
 
 # 项目根路径
 ROOT_PATH=$(pwd)
@@ -23,14 +27,6 @@ fi
 # docker和项目文件映射地址
 RUN_PATH=${ROOT_PATH}
 
-# 容器版本
-IMAGE_MONGO="mongo"
-IMAGE_MYSQL="mysql:5.7"
-IMAGE_REDIS="redis"
-IMAGE_JEEFREE="java:8"
-IMAGE_IPFS="ipfs/go-ipfs:latest"
-IMAGE_MQ="rabbitmq:3.8.3-management"
-
 # 外部触发指令
 # 用户级
 COMMAND_MONGO="mongo"
@@ -40,21 +36,16 @@ COMMAND_MQ="mq"
 COMMAND_IPFS="ipfs"
 COMMAND_JEEFREE="jeefree"
 
-# container
-IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
-IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${COMMAND_MYSQL}
-IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${COMMAND_REDIS}
-IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${COMMAND_MQ}
-IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${COMMAND_IPFS}
-IMAGE_CONTAINER_JEEFREE=${PROJECT_NAME}"-"${COMMAND_JEEFREE}
-
-# 镜像上传的账号和密码
-DOCKER_USERNAME=xxx@xxx.xxx
-DOCKER_PASSWORD=xxx
+# 容器版本
+IMAGE_MONGO="mongo"
+IMAGE_MYSQL="mysql:5.7"
+IMAGE_REDIS="redis"
+IMAGE_JEEFREE="java:8"
+IMAGE_IPFS="ipfs/go-ipfs:latest"
+IMAGE_MQ="rabbitmq:3.8.3-management"
 
 # 镜像推送名称
 PUSH_ROOT_REGISTRY=registry.cn-hangzhou.aliyuncs.com
-PUSH_IMAGE_CONTAINER_JEEFREE=${PUSH_ROOT_REGISTRY}/jeefree/jeefree-admin
 
 # 根据不同项目模式切换参数
 if [[ ${PROJECT_MODE} == "prod" ]]; then
@@ -62,85 +53,42 @@ if [[ ${PROJECT_MODE} == "prod" ]]; then
   docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
 fi
 
-# 启动项目
-function start_state() {
-    # 登录
-    if [[ ${STATE} == "" ]]; then
-        printHelp
-        exit 1
-    else
-        start_one ${STATE}
-    fi
-}
-
-# 推送发布项目
-function push_state() {
-    if [[ ${STATE} == "" ]]; then
-        printHelp
-        exit 1
-    else
-        push_one ${STATE}
-    fi
-}
-
 # 日志查看
-function logs_state() {
-        case ${STATE} in
-        ${COMMAND_MYSQL})
-            docker logs -f ${IMAGE_CONTAINER_MYSQL} --tail 10
-        ;;
-        ${COMMAND_MONGO})
-            docker logs -f ${IMAGE_CONTAINER_MONGO} --tail 10
-        ;;
-        ${COMMAND_REDIS})
-            docker logs -f ${IMAGE_CONTAINER_REDIS} --tail 10
-        ;;
-        ${COMMAND_MQ})
-            docker logs -f ${IMAGE_CONTAINER_MQ} --tail 10
-        ;;
-        ${COMMAND_IPFS})
-            docker logs -f ${IMAGE_CONTAINER_IPFS} --tail 10
-        ;;
-        ${COMMAND_JEEFREE})
-            docker logs -f ${IMAGE_CONTAINER_JEEFREE} --tail 10
-        ;;
-        *)
-            docker logs -f $1 --tail 10
-    esac
+function logs_one() {
+    docker logs -f ${PROJECT_NAME}"-"${STATE} --tail 15
 }
 
-# 启动所有项目
-function start() {
-    if [[ ${STATE} == "" ]]; then
-        printHelp
-        exit 1
-    else
-        start_one "${STATE}"
-    fi
+# 推送一个项目docker到仓库
+function push_one() {
+  docker tag ${PROJECT_NAME}"-"$1 ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
+  docker push ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
+  docker rmi -f ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
 }
 
 # 启动指定服务
 function start_one() {
     # 程序配置文件的正常读取是在该目录下进行的
-    case $1 in
+    case ${STATE} in
         ${COMMAND_MYSQL})
-            IMAGE_MYSQL=${IMAGE_MYSQL} IMAGE_CONTAINER_MYSQL=${IMAGE_CONTAINER_MYSQL} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MYSQL}
+            IMAGE_MYSQL=${IMAGE_MYSQL} IMAGE_CONTAINER_MYSQL=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_MONGO})
-            IMAGE_MONGO=${IMAGE_MONGO} IMAGE_CONTAINER_MONGO=${IMAGE_CONTAINER_MONGO} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MONGO}
+            IMAGE_MONGO=${IMAGE_MONGO} IMAGE_CONTAINER_MONGO=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_REDIS})
-            IMAGE_REDIS=${IMAGE_REDIS} IMAGE_CONTAINER_REDIS=${IMAGE_CONTAINER_REDIS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_REDIS}
+            IMAGE_REDIS=${IMAGE_REDIS} IMAGE_CONTAINER_REDIS=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_MQ})
-            IMAGE_MQ=${IMAGE_MQ} IMAGE_CONTAINER_MQ=${IMAGE_CONTAINER_MQ} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_MQ}
+            IMAGE_MQ=${IMAGE_MQ} IMAGE_CONTAINER_MQ=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_IPFS})
-            IMAGE_IPFS=${IMAGE_IPFS} IMAGE_CONTAINER_IPFS=${IMAGE_CONTAINER_IPFS} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_IPFS}
+            IMAGE_IPFS=${IMAGE_IPFS} IMAGE_CONTAINER_IPFS=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
         ${COMMAND_JEEFREE})
-            IMAGE_JEEFREE=${IMAGE_JEEFREE} IMAGE_CONTAINER_JEEFREE=${IMAGE_CONTAINER_JEEFREE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${IMAGE_CONTAINER_JEEFREE}
+            IMAGE_JEEFREE=${IMAGE_JEEFREE} IMAGE_CONTAINER_JEEFREE=${PROJECT_NAME}"-"${STATE} RUN_PATH=${RUN_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
+        *)
+            printHelp
     esac
 }
 
@@ -190,76 +138,35 @@ function release_all() {
 
 # 清理关闭一个指定容器
 function release_one() {
-    case $1 in
-        ${COMMAND_MYSQL})
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MYSQL}
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MYSQL}
-        ;;
-        ${COMMAND_MONGO})
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MONGO}
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MONGO}
-        ;;
-        ${COMMAND_REDIS})
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_REDIS}
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_REDIS}
-        ;;
-        ${COMMAND_MQ})
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_MQ}
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_MQ}
-        ;;
-        ${COMMAND_IPFS})
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_IPFS}
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_IPFS}
-        ;;
-        ${COMMAND_JEEFREE})
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${IMAGE_CONTAINER_JEEFREE}
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${IMAGE_CONTAINER_JEEFREE}
-        ;;
-        *)
-            RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop $1
-            docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f $1
-            docker rmi -f $1
-            exit 1
-    esac
-}
-
-# 发布一个项目docker到仓库
-function push_one() {
-    case $1 in
-        ${COMMAND_JEEFREE})
-            docker tag ${IMAGE_CONTAINER_JEEFREE} ${PUSH_IMAGE_CONTAINER_JEEFREE}
-            docker push ${PUSH_IMAGE_CONTAINER_JEEFREE}
-            docker rmi -f ${PUSH_IMAGE_CONTAINER_JEEFREE}
-        ;;
-        *)
-            printHelp
-            exit 1
-    esac
+  RUN_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${PROJECT_NAME}"-"$1
+  docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${PROJECT_NAME}"-"$1
 }
 
 function printHelp() {
     echo "./main.sh start [+操作码]：启动服务"
     echo "          [操作码]"
-    echo "               all：启动所有服务"
-    echo "               指定服务：启动指定服务,当前支持[mysql,redis,mongo,mq]"
+    echo "               指定服务：启动指定服务,当前支持[mysql,redis,mongo,mq,ipfs,jeefree]"
     echo "./main.sh logs [+操作码]：查看日志"
     echo "          [操作码]"
-    echo "               指定服务：查看指定日志,当前支持[mysql,redis,mongo,mq]"
+    echo "               指定服务：查看指定日志,当前支持[mysql,redis,mongo,mq,ipfs,jeefree]"
+    echo "./main.sh push [+操作码]：推送镜像到仓库"
+    echo "          [操作码]"
+    echo "               指定服务：推送到指定仓库，当前支持[jeefree]"
     echo "./main.sh release [+操作码]：用于释放项目和其余容器"
     echo "          [操作码]"
     echo "               all：释放项目所有内容，包括各种容器"
-    echo "               指定容器名：释放指定容器，主要是用来释放项目所在的容器,当前支持[mysql,redis,mongo,mq]"
+    echo "               指定容器名：释放指定容器，主要是用来释放项目所在的容器,当前支持[mysql,redis,mongo,mq,jeefree,ipfs]"
     echo "其余操作将触发此说明"
 }
 
 #启动模式
 case ${MODE} in
     "start")
-        start_state ;;
+        start_one ;;
     "logs")
-        logs_state ;;
+        logs_one ;;
     "push")
-        push_state ;;
+        push_one ;;
     "release")
         release_state ;;
     *)

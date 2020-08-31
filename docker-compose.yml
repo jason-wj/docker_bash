@@ -5,7 +5,7 @@ networks:
 
 services:
   # 全局-nosql数据库mongodb
-  flag-mongo:
+  myflag-mongo:
     image: ${IMAGE_MONGO}
     container_name: ${IMAGE_CONTAINER_MONGO}
     volumes:
@@ -19,7 +19,7 @@ services:
       - basic
 
 #  全局-关系型数据库mysql
-  flag-mysql:
+  myflag-mysql:
     image: ${IMAGE_MYSQL}
     container_name: ${IMAGE_CONTAINER_MYSQL}
     volumes:
@@ -37,7 +37,7 @@ services:
       - basic
 
   #  全局-缓存 redis
-  flag-redis:
+  myflag-redis:
     image: ${IMAGE_REDIS}
     container_name: ${IMAGE_CONTAINER_REDIS}
     volumes:
@@ -50,8 +50,8 @@ services:
     command:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
-  #  ipfs单节点
-  flag-jeefree:
+  #  jeefree
+  myflag-jeefree:
     image: ${IMAGE_JEEFREE}
     container_name: ${IMAGE_CONTAINER_JEEFREE}
     volumes:
@@ -61,12 +61,12 @@ services:
     working_dir: /app
     command:
 #      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=host.docker.internal --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:3306/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
-      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=flag-redis --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
+      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=myflag-redis --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
     networks:
       - basic
 
   #  ipfs单节点
-  flag-ipfs:
+  myflag-ipfs:
     image: ${IMAGE_IPFS}
     container_name: ${IMAGE_CONTAINER_IPFS}
     volumes:
@@ -84,7 +84,7 @@ services:
     # 5672 -- client端通信口
     # 15672 -- 管理界面ui端口
     # 25672 -- server间内部通信口，集群之间
-  flag-mq:
+  myflag-mq:
     hostname: localhost
     container_name: ${IMAGE_CONTAINER_MQ}
     environment:
