@@ -33,6 +33,7 @@ COMMAND_MQ="mq"
 COMMAND_IPFS="ipfs"
 COMMAND_JEEFREE="jeefree"
 COMMAND_JEEFREEUI="jeefreeui"
+COMMAND_PORTAINER="portainer"
 
 # 容器版本
 IMAGE_MONGO="mongo"
@@ -42,6 +43,7 @@ IMAGE_IPFS="ipfs/go-ipfs:latest"
 IMAGE_MQ="rabbitmq:3.8.3-management"
 IMAGE_JEEFREE="java:8"
 IMAGE_JEEFREEUI="nginx"
+IMAGE_PORTAINER="portainer/portainer"
 
 # 镜像推送名称
 PUSH_ROOT_REGISTRY="registry.cn-hangzhou.aliyuncs.com"
@@ -89,6 +91,9 @@ function start_one() {
         ${COMMAND_JEEFREEUI})
             IMAGE_JEEFREEUI=${IMAGE_JEEFREEUI} CONTAINER_JEEFREEUI=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
         ;;
+        ${COMMAND_PORTAINER})
+            IMAGE_PORTAINER=${IMAGE_PORTAINER} CONTAINER_PORTAINER=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
+        ;;
         *)
             printHelp
     esac
@@ -105,19 +110,16 @@ function release_state() {
     fi
 }
 
-# 全局释放所有docker环境，当前系统所有镜像都会受到影响
-# 不确定则请慎用
-function release_all() {
-    # 关闭当前系统正在运行的容器，并清除
-    docker stop $(docker ps -a | awk '{ print $1}' | tail -n +2)
-    docker rm -f $(docker ps -a | awk '{ print $1}' | tail -n +2)
-
+# 无论全局清理还是单独清理，都会执行如下内容，删除无效网络、卷、容器、镜像等
+function release_base(){
     docker volume ls -qf dangling=true
     # 查看指定的volume
     # docker inspect docker_orderer.example.com
 
     # 开始清理
-    docker volume rm $(docker volume ls -qf dangling=true)
+    if [[ -n $(docker volume ls -qf dangling=true) ]]; then
+      docker volume rm $(docker volume ls -qf dangling=true)
+    fi
     # 删除为none的镜像
     docker images | grep none | awk '{print $3}' | xargs docker rmi -f
     docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | xargs docker rmi
@@ -134,10 +136,21 @@ function release_all() {
     docker network prune -f
 }
 
+# 全局释放所有docker环境，当前系统所有镜像都会受到影响
+# 不确定则请慎用
+function release_all() {
+    docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop
+    # 关闭当前系统正在运行的容器，并清除
+    docker stop $(docker ps -a | awk '{ print $1}' | tail -n +2)
+    docker rm -f $(docker ps -a | awk '{ print $1}' | tail -n +2)
+    release_base
+}
+
 # 清理关闭一个指定容器
 function release_one() {
   ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${PROJECT_NAME}"-"$1
   docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${PROJECT_NAME}"-"$1
+  release_base
 }
 
 function printHelp() {

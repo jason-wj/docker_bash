@@ -4,7 +4,7 @@ networks:
   basic:
 
 services:
-  # 全局-nosql数据库mongodb
+  # 1. 全局-nosql数据库mongodb
   myflag-mongo:
     image: ${IMAGE_MONGO}
     container_name: ${CONTAINER_MONGO}
@@ -18,7 +18,7 @@ services:
     networks:
       - basic
 
-#  全局-关系型数据库mysql
+#  2. 全局-关系型数据库mysql
   myflag-mysql:
     image: ${IMAGE_MYSQL}
     container_name: ${CONTAINER_MYSQL}
@@ -36,7 +36,7 @@ services:
     networks:
       - basic
 
-  #  全局-缓存 redis
+  #  3. 全局-缓存 redis
   myflag-redis:
     image: ${IMAGE_REDIS}
     container_name: ${CONTAINER_REDIS}
@@ -50,7 +50,7 @@ services:
     command:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
-  #  jeefree
+  # 4. jeefree
   myflag-jeefree:
     image: ${IMAGE_JEEFREE}
     container_name: ${CONTAINER_JEEFREE}
@@ -65,7 +65,7 @@ services:
     networks:
       - basic
 
-  # jeefree ui 后台管理页面
+  # 5. jeefree ui 后台管理页面
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
   myflag-jeefreeui:
     image: ${IMAGE_JEEFREEUI}
@@ -79,7 +79,7 @@ services:
       - 8082:80
       - 443:443
 
-  #  ipfs单节点
+  #  6. ipfs单节点
   myflag-ipfs:
     image: ${IMAGE_IPFS}
     container_name: ${CONTAINER_IPFS}
@@ -93,7 +93,17 @@ services:
     networks:
       - basic
 
-    #  消息队列
+  # 7. docker管理工具
+  myflag-portainer:
+    image: ${IMAGE_PORTAINER}
+    container_name: ${CONTAINER_PORTAINER}
+    ports:
+      - 9000:9000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $ROOT_PATH/data-server/${CONTAINER_PORTAINER}/data:/data
+
+    #  8. 消息队列
     # 4369 -- erlang发现口
     # 5672 -- client端通信口
     # 15672 -- 管理界面ui端口
