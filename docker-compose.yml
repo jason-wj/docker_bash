@@ -1,14 +1,12 @@
-version: '2.1'
+version: '3.8'
 
 networks:
   base:
-    driver: macvlan
-    driver_opts:
-      parent: eth0
+    driver: bridge
     ipam:
+      driver: default
       config:
-        - subnet: 172.17.0.0/16
-          gateway: 172.17.0.1
+        - subnet: ${SUBNET}
 
 services:
   # 1. 全局-nosql数据库mongodb
@@ -21,9 +19,9 @@ services:
     command: --wiredTigerCacheSizeGB 3
     ports:
       - 9091:27017
-    #mem_limit: 1500M
     networks:
-      - basic
+      base:
+        ipv4_address: ${CONTAINER_MONGO_IP}
 
 #  2. 全局-关系型数据库mysql
   myflag-mysql:
@@ -41,7 +39,8 @@ services:
     ports:
       - 9906:3306
     networks:
-      - basic
+      base:
+        ipv4_address: ${CONTAINER_MYSQL_IP}
 
   #  3. 全局-缓存 redis
   myflag-redis:
@@ -53,7 +52,8 @@ services:
     ports:
       - 6379:6379
     networks:
-      - basic
+      base:
+        ipv4_address: ${CONTAINER_REDIS_IP}
     command:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
@@ -67,10 +67,12 @@ services:
       - 8081:8081
     working_dir: /app
     command:
-#      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=host.docker.internal --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:3306/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
-      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=myflag-redis --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
+#      /bin/bash -c "while true;do echo hello docker;sleep 1;done"
+#      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=192.168.31.245 --spring.datasource.druid.master.url=jdbc:mysql://192.168.31.245:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
+      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=192.168.31.245 --spring.datasource.druid.master.url=jdbc:mysql://192.168.31.245:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
     networks:
-      - basic
+      base:
+        ipv4_address: ${CONTAINER_JEEFREE_IP}
 
   # 5. jeefree ui 后台管理页面
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
@@ -86,7 +88,8 @@ services:
       - 8082:80
       - 443:443
     networks:
-      - basic
+      base:
+        ipv4_address: ${CONTAINER_JEEFREEUI_IP}
 
   #  6. ipfs单节点
   myflag-ipfs:
@@ -100,7 +103,8 @@ services:
       - 5001:5001
       - 8081:8080
     networks:
-      - basic
+      base:
+        ipv4_address: ${CONTAINER_IPFS_IP}
 
   # 7. docker管理工具
   myflag-portainer:
@@ -111,7 +115,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - $ROOT_PATH/data-server/${CONTAINER_PORTAINER}/data:/data
-
+    networks:
+      base:
+        ipv4_address: ${CONTAINER_PORTAINER_IP}
     #  8. 消息队列
     # 4369 -- erlang发现口
     # 5672 -- client端通信口
@@ -134,6 +140,9 @@ services:
       - 4369:4369
       - 5672:5672
       - 25672:25672
+    networks:
+      base:
+        ipv4_address: ${CONTAINER_MQ_IP}
 #    command:
 #      - /bin/bash
 #      - -c
