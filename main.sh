@@ -9,9 +9,12 @@ PROJECT_NAME=myflag
 # 项目模式：开发-dev、生产-prod
 PROJECT_MODE=dev
 
-# 镜像上传的账号和密码
+# 镜像推送的账号和密码
 DOCKER_USERNAME=xxx@xxx.xxx
 DOCKER_PASSWORD=xxx
+
+# 镜像推送名称
+PUSH_ROOT_REGISTRY="registry.cn-hangzhou.aliyuncs.com"
 
 # docker-compose 文件名
 DOCKER_COMPOSE_FILE="docker-compose.yml"
@@ -45,10 +48,7 @@ IMAGE_JEEFREE="java:8"
 IMAGE_JEEFREEUI="nginx"
 IMAGE_PORTAINER="portainer/portainer"
 
-# 镜像推送名称
-PUSH_ROOT_REGISTRY="registry.cn-hangzhou.aliyuncs.com"
-
-# 根据不同项目模式切换参数
+# 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then
   IMAGE_JEEFREE=${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
   docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
