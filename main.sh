@@ -154,19 +154,20 @@ function release_one() {
 }
 
 function printHelp() {
+    echo "当前支持的指定服务：[mysql,redis,mongo,mq,ipfs,jeefree,jeefreeui,portainer]"
     echo "./main.sh start [+操作码]：启动服务"
     echo "          [操作码]"
-    echo "               指定服务：启动指定服务,当前支持[mysql,redis,mongo,mq,ipfs,jeefree]"
+    echo "               指定服务：启动指定服务"
     echo "./main.sh logs [+操作码]：查看日志"
     echo "          [操作码]"
-    echo "               指定服务：查看指定日志,当前支持[mysql,redis,mongo,mq,ipfs,jeefree]"
+    echo "               指定服务：查看指定日志"
     echo "./main.sh push [+操作码]：推送镜像到仓库"
     echo "          [操作码]"
     echo "               指定服务：推送到指定仓库，当前支持[jeefree]"
     echo "./main.sh release [+操作码]：用于释放项目和其余容器"
     echo "          [操作码]"
-    echo "               all：释放项目所有内容，包括各种容器"
-    echo "               指定容器名：释放指定容器，主要是用来释放项目所在的容器,当前支持[mysql,redis,mongo,mq,jeefree,ipfs]"
+    echo "               all：释放项目所有内容，包括各种容器、网络等，非当前docker-compose编排的容器也会被清理，务必谨慎使用！"
+    echo "               指定容器名：释放指定容器，主要是用来释放项目所在的容器"
     echo "其余操作将触发此说明"
 }
 
