@@ -1,7 +1,14 @@
 version: '2.1'
 
 networks:
-  basic:
+  base:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 172.17.0.0/16
+          gateway: 172.17.0.1
 
 services:
   # 1. 全局-nosql数据库mongodb
@@ -57,7 +64,7 @@ services:
     volumes:
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app:/app:rw
     ports:
-      - 8081:8080
+      - 8081:8081
     working_dir: /app
     command:
 #      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=host.docker.internal --spring.datasource.druid.master.url=jdbc:mysql://host.docker.internal:3306/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
@@ -78,6 +85,8 @@ services:
     ports:
       - 8082:80
       - 443:443
+    networks:
+      - basic
 
   #  6. ipfs单节点
   myflag-ipfs:

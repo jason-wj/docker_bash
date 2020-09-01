@@ -10,7 +10,7 @@ PROJECT_NAME=myflag
 PROJECT_MODE=dev
 
 # 镜像推送的账号和密码
-DOCKER_USERNAME=xxx@xxx.xxx
+DOCKER_USERNAME=xxx@xxx.xx
 DOCKER_PASSWORD=xxx
 
 # 镜像推送名称
@@ -61,9 +61,9 @@ function logs_one() {
 
 # 推送一个项目docker到仓库
 function push_one() {
-  docker tag ${PROJECT_NAME}"-"$1 ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
-  docker push ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
-  docker rmi -f ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
+  docker tag ${IMAGE_JEEFREE} ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
+  docker push ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
+  docker rmi -f ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
 }
 
 # 启动指定服务
