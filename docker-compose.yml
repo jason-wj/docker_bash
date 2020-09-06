@@ -23,7 +23,7 @@ services:
       base:
         ipv4_address: ${CONTAINER_MONGO_IP}
 
-#  2. 全局-关系型数据库mysql
+  #  2. 全局-关系型数据库mysql
   myflag-mysql:
     image: ${IMAGE_MYSQL}
     container_name: ${CONTAINER_MYSQL}
@@ -58,20 +58,23 @@ services:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
   # 4. jeefree
+  # 需要追加执行目录，无法在已有PATH之后追加，目前能想到的就是PATH重写
   myflag-jeefree:
     image: ${IMAGE_JEEFREE}
     container_name: ${CONTAINER_JEEFREE}
     volumes:
-      - $ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app:/app:rw
+      - $ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app:$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
     ports:
       - 8081:8081
-    working_dir: /app
+    environment:
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app/bin
+    working_dir: $ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app
     command:
-#      /bin/bash -c "while true;do echo hello docker;sleep 1;done"
-# 服务器
-      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=172.20.0.4 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://172.17.0.16:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
-# 本地
-#      java -jar app.jar --jeefree.profile=/app/userfile/ --spring.redis.host=175.24.61.41 --spring.redis.port=8890 --spring.datasource.druid.master.url=jdbc:mysql://175.24.61.41:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
+#       /bin/bash -c "while true;do echo hello docker;sleep 1;done"
+      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app/userfile/ --spring.redis.host=172.20.0.4 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://172.17.0.16:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
+#       java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app/userfile/ --spring.redis.host=192.168.31.245 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://192.168.31.245:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
     networks:
       base:
         ipv4_address: ${CONTAINER_JEEFREE_IP}
@@ -83,7 +86,7 @@ services:
     container_name: ${CONTAINER_JEEFREEUI}
     volumes:
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf.d:/etc/nginx/conf.d:rw
-#      - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf:/etc/nginx/nginx.conf:rw
+#            - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf:/etc/nginx/nginx.conf:rw
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/log:/var/log/nginx:rw
       - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/www:/usr/share/nginx/html:rw
     ports:
@@ -134,8 +137,8 @@ services:
       RABBITMQ_DEFAULT_PASS: "root"
     image: ${IMAGE_MQ}
     volumes:
-#      windows下需要映射到当前windows用户的文件目录下，比如：C:\Users\${username}，未避免影响到开发，这里将该映射关闭，生产时，Linux下一定要开启
-#      - $ROOT_PATH/data-server/${CONTAINER_MQ}/data:/var/lib/rabbitmq
+#            windows下需要映射到当前windows用户的文件目录下，比如：C:\Users\${username}，未避免影响到开发，这里将该映射关闭，生产时，Linux下一定要开启
+#            - $ROOT_PATH/data-server/${CONTAINER_MQ}/data:/var/lib/rabbitmq
       - $ROOT_PATH/data-server/${CONTAINER_MQ}/log:/var/log/rabbitmq/log
     ports:
       - 15672:15672
