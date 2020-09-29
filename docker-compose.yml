@@ -51,6 +51,7 @@ services:
 
   # 4. java
   # 需要追加执行目录，无法在已有PATH之后追加，目前能想到的就是PATH重写
+  # 若需要使用容器mysql，则 links中将mysql注释取消
   myflag-java:
     image: ${IMAGE_JAVA}
     container_name: ${CONTAINER_JAVA}
@@ -62,6 +63,7 @@ services:
       - 8081:8081
     links:
       - ${CONTAINER_REDIS}
+#      - ${CONTAINER_MYSQL}
     environment:
       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/bin
     working_dir: $ROOT_PATH/data-server/${CONTAINER_JAVA}/app
@@ -69,7 +71,7 @@ services:
       base:
     command:
 #       /bin/bash -c "while true;do echo hello docker;sleep 1;done"
-      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://172.17.0.16:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
+      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://db地址:对应端口/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=db用户名 --spring.datasource.druid.master.password=db密码
 
   # 5. nginx
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
