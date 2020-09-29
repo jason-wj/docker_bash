@@ -2,11 +2,6 @@ version: '3.8'
 
 networks:
   base:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: ${SUBNET}
 
 services:
   # 1. 全局-nosql数据库mongodb
@@ -21,7 +16,6 @@ services:
       - 9091:27017
     networks:
       base:
-        ipv4_address: ${CONTAINER_MONGO_IP}
 
   #  2. 全局-关系型数据库mysql
   myflag-mysql:
@@ -40,7 +34,6 @@ services:
       - 9906:3306
     networks:
       base:
-        ipv4_address: ${CONTAINER_MYSQL_IP}
 
   #  3. 全局-缓存 redis
   myflag-redis:
@@ -53,48 +46,47 @@ services:
       - 8890:6379
     networks:
       base:
-        ipv4_address: ${CONTAINER_REDIS_IP}
     command:
       redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
 
-  # 4. jeefree
+  # 4. java
   # 需要追加执行目录，无法在已有PATH之后追加，目前能想到的就是PATH重写
-  myflag-jeefree:
-    image: ${IMAGE_JEEFREE}
-    container_name: ${CONTAINER_JEEFREE}
+  myflag-java:
+    image: ${IMAGE_JAVA}
+    container_name: ${CONTAINER_JAVA}
     volumes:
-      - $ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app:$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app:rw
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker
+      - $ROOT_PATH/data-server/${CONTAINER_JAVA}/app:$ROOT_PATH/data-server/${CONTAINER_JAVA}/app:rw
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /usr/bin/docker:/usr/bin/docker
     ports:
       - 8081:8081
+    depends_on:
+      - ${CONTAINER_REDIS}
     environment:
-      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app/bin
-    working_dir: $ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app
-    command:
-#       /bin/bash -c "while true;do echo hello docker;sleep 1;done"
-      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app/userfile/ --spring.redis.host=172.20.0.4 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://172.17.0.16:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
-#       java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JEEFREE}/app/userfile/ --spring.redis.host=192.168.31.245 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://192.168.31.245:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/bin
+    working_dir: $ROOT_PATH/data-server/${CONTAINER_JAVA}/app
     networks:
       base:
-        ipv4_address: ${CONTAINER_JEEFREE_IP}
+    command:
+#       /bin/bash -c "while true;do echo hello docker;sleep 1;done"
+      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://175.24.61.41:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
+#       java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=192.168.31.245 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://192.168.31.245:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
 
-  # 5. jeefree ui 后台管理页面
+  # 5. nginx
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
-  myflag-jeefreeui:
-    image: ${IMAGE_JEEFREEUI}
-    container_name: ${CONTAINER_JEEFREEUI}
+  myflag-nginx:
+    image: ${IMAGE_NGINX}
+    container_name: ${CONTAINER_NGINX}
     volumes:
-      - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf.d:/etc/nginx/conf.d:rw
-#            - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/conf:/etc/nginx/nginx.conf:rw
-      - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/log:/var/log/nginx:rw
-      - $ROOT_PATH/data-server/${CONTAINER_JEEFREEUI}/www:/usr/share/nginx/html:rw
+      - $ROOT_PATH/data-server/${CONTAINER_NGINX}/conf.d:/etc/nginx/conf.d:rw
+#            - $ROOT_PATH/data-server/${CONTAINER_NGINX}/conf:/etc/nginx/nginx.conf:rw
+      - $ROOT_PATH/data-server/${CONTAINER_NGINX}/log:/var/log/nginx:rw
+      - $ROOT_PATH/data-server/${CONTAINER_NGINX}/www:/usr/share/nginx/html:rw
     ports:
       - 8082:80
       - 443:443
     networks:
       base:
-        ipv4_address: ${CONTAINER_JEEFREEUI_IP}
 
   #  6. ipfs单节点
   myflag-ipfs:
@@ -109,7 +101,6 @@ services:
       - 8081:8080
     networks:
       base:
-        ipv4_address: ${CONTAINER_IPFS_IP}
 
   # 7. docker管理工具
   myflag-portainer:
@@ -122,7 +113,7 @@ services:
       - $ROOT_PATH/data-server/${CONTAINER_PORTAINER}/data:/data
     networks:
       base:
-        ipv4_address: ${CONTAINER_PORTAINER_IP}
+
     #  8. 消息队列
     # 4369 -- erlang发现口
     # 5672 -- client端通信口
@@ -147,7 +138,6 @@ services:
       - 25672:25672
     networks:
       base:
-        ipv4_address: ${CONTAINER_MQ_IP}
 #    command:
 #      - /bin/bash
 #      - -c

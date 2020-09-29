@@ -21,11 +21,11 @@ PUSH_ROOT_REGISTRY="registry.cn-hangzhou.aliyuncs.com"
 DOCKER_COMPOSE_FILE="docker-compose.yml"
 
 # 项目根路径
-ROOT_PATH=$(pwd)
+export ROOT_PATH=$(pwd)
 
 # 如果环境变量docker_compose所在目录不为空，则优先使用
 if [[ -n ${DOCKER_COMPOSE_PATH} ]]; then
-    ROOT_PATH=${DOCKER_COMPOSE_PATH}
+    export ROOT_PATH=${DOCKER_COMPOSE_PATH}
 fi
 
 # 外部触发指令
@@ -35,36 +35,32 @@ COMMAND_MYSQL="mysql"
 COMMAND_REDIS="redis"
 COMMAND_MQ="mq"
 COMMAND_IPFS="ipfs"
-COMMAND_JEEFREE="jeefree"
-COMMAND_JEEFREEUI="jeefreeui"
+COMMAND_JAVA="java"
+COMMAND_NGINX="nginx"
 COMMAND_PORTAINER="portainer"
 
 # 容器版本
-IMAGE_MONGO="mongo"
-IMAGE_MYSQL="mysql:5.7"
-IMAGE_REDIS="redis"
-IMAGE_IPFS="ipfs/go-ipfs:latest"
-IMAGE_MQ="rabbitmq:3.8.3-management"
-IMAGE_JEEFREE="java:8"
-IMAGE_JEEFREEUI="nginx"
-IMAGE_PORTAINER="portainer/portainer"
+export IMAGE_MONGO="mongo"
+export IMAGE_MYSQL="mysql:5.7"
+export IMAGE_REDIS="redis"
+export IMAGE_IPFS="ipfs/go-ipfs:latest"
+export IMAGE_MQ="rabbitmq:3.8.3-management"
+export IMAGE_JAVA="java:8"
+export IMAGE_NGINX="nginx"
+export IMAGE_PORTAINER="portainer/portainer"
 
-# 设置容器网段,格式：xx.xx.xx.0/xx
-SUBNET=172.20.0.0/20
-
-# 每个容器设置固定ip
-CONTAINER_MONGO_IP=172.20.0.2
-CONTAINER_MYSQL_IP=172.20.0.3
-CONTAINER_REDIS_IP=172.20.0.4
-CONTAINER_IPFS_IP=172.20.0.5
-CONTAINER_MQ_IP=172.20.0.6
-CONTAINER_JEEFREE_IP=172.20.0.7
-CONTAINER_JEEFREEUI_IP=172.20.0.8
-CONTAINER_PORTAINER_IP=172.20.0.9
+# container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
+export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
+export CONTAINER_MYSQL=${PROJECT_NAME}"-"${COMMAND_MYSQL}
+export CONTAINER_REDIS=${PROJECT_NAME}"-"${COMMAND_REDIS}
+export CONTAINER_MQ=${PROJECT_NAME}"-"${COMMAND_MQ}
+export CONTAINER_IPFS=${PROJECT_NAME}"-"${COMMAND_IPFS}
+export CONTAINER_JAVA=${PROJECT_NAME}"-"${COMMAND_JAVA}
+export CONTAINER_NGINX=${PROJECT_NAME}"-"${COMMAND_NGINX}
 
 # 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then
-  IMAGE_JEEFREE=${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
+  export IMAGE_JAVA=${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"$1
   docker login --username=${DOCKER_USERNAME} --password ${DOCKER_PASSWORD} ${PUSH_ROOT_REGISTRY}
 fi
 
@@ -75,42 +71,14 @@ function logs_one() {
 
 # 推送一个项目docker到仓库
 function push_one() {
-  docker tag ${IMAGE_JEEFREE} ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
+  docker tag ${IMAGE_JAVA} ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
   docker push ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
   docker rmi -f ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
 }
 
 # 启动指定服务
 function start_one() {
-    # 程序配置文件的正常读取是在该目录下进行的
-    case ${STATE} in
-        ${COMMAND_MYSQL})
-           SUBNET=${SUBNET} CONTAINER_MYSQL_IP=${CONTAINER_MYSQL_IP} IMAGE_MYSQL=${IMAGE_MYSQL} CONTAINER_MYSQL=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_MONGO})
-            SUBNET=${SUBNET} CONTAINER_MONGO_IP=${CONTAINER_MONGO_IP} IMAGE_MONGO=${IMAGE_MONGO} CONTAINER_MONGO=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_REDIS})
-            SUBNET=${SUBNET} CONTAINER_REDIS_IP=${CONTAINER_REDIS_IP} IMAGE_REDIS=${IMAGE_REDIS} CONTAINER_REDIS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_MQ})
-            SUBNET=${SUBNET} CONTAINER_MQ_IP=${CONTAINER_MQ_IP} IMAGE_MQ=${IMAGE_MQ} CONTAINER_MQ=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_IPFS})
-            SUBNET=${SUBNET} CONTAINER_IPFS_IP=${CONTAINER_IPFS_IP} IMAGE_IPFS=${IMAGE_IPFS} CONTAINER_IPFS=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_JEEFREE})
-            SUBNET=${SUBNET} CONTAINER_JEEFREE_IP=${CONTAINER_JEEFREE_IP} IMAGE_JEEFREE=${IMAGE_JEEFREE} CONTAINER_JEEFREE=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_JEEFREEUI})
-            SUBNET=${SUBNET} CONTAINER_JEEFREEUI_IP=${CONTAINER_JEEFREEUI_IP} IMAGE_JEEFREEUI=${IMAGE_JEEFREEUI} CONTAINER_JEEFREEUI=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        ${COMMAND_PORTAINER})
-            SUBNET=${SUBNET} CONTAINER_PORTAINER_IP=${CONTAINER_PORTAINER_IP} IMAGE_PORTAINER=${IMAGE_PORTAINER} CONTAINER_PORTAINER=${PROJECT_NAME}"-"${STATE} ROOT_PATH=${ROOT_PATH} docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
-        ;;
-        *)
-            printHelp
-    esac
+    docker-compose --log-level ERROR -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} up -d ${PROJECT_NAME}"-"${STATE}
 }
 
 function release_state() {
@@ -162,13 +130,13 @@ function release_all() {
 
 # 清理关闭一个指定容器
 function release_one() {
-  ROOT_PATH=${ROOT_PATH} docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${PROJECT_NAME}"-"$1
+  docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} stop ${PROJECT_NAME}"-"$1
   docker-compose -f "${ROOT_PATH}"/${DOCKER_COMPOSE_FILE} rm -f ${PROJECT_NAME}"-"$1
   release_base
 }
 
 function printHelp() {
-    echo "当前支持的指定服务：[mysql,redis,mongo,mq,ipfs,jeefree,jeefreeui,portainer]"
+    echo "当前支持的指定服务：[mysql,redis,mongo,mq,ipfs,java,nginx,portainer]"
     echo "./main.sh start [+操作码]：启动服务"
     echo "          [操作码]"
     echo "               指定服务：启动指定服务"
@@ -177,7 +145,7 @@ function printHelp() {
     echo "               指定服务：查看指定日志"
     echo "./main.sh push [+操作码]：推送镜像到仓库"
     echo "          [操作码]"
-    echo "               指定服务：推送到指定仓库，当前支持[jeefree]"
+    echo "               指定服务：推送到指定仓库，当前支持[java]"
     echo "./main.sh release [+操作码]：用于释放项目和其余容器"
     echo "          [操作码]"
     echo "               all：释放项目所有内容，包括各种容器、网络等，非当前docker-compose编排的容器也会被清理，务必谨慎使用！"
