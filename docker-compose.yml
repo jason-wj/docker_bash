@@ -60,7 +60,7 @@ services:
 #      - /usr/bin/docker:/usr/bin/docker
     ports:
       - 8081:8081
-    depends_on:
+    links:
       - ${CONTAINER_REDIS}
     environment:
       PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/bin
@@ -69,8 +69,7 @@ services:
       base:
     command:
 #       /bin/bash -c "while true;do echo hello docker;sleep 1;done"
-      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://175.24.61.41:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
-#       java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=192.168.31.245 --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://192.168.31.245:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=root --spring.datasource.druid.master.password=root
+      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://172.17.0.16:9906/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=jeefree --spring.datasource.druid.master.password=JXaWJ865HFL3B3hZ
 
   # 5. nginx
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
@@ -82,6 +81,8 @@ services:
 #            - $ROOT_PATH/data-server/${CONTAINER_NGINX}/conf:/etc/nginx/nginx.conf:rw
       - $ROOT_PATH/data-server/${CONTAINER_NGINX}/log:/var/log/nginx:rw
       - $ROOT_PATH/data-server/${CONTAINER_NGINX}/www:/usr/share/nginx/html:rw
+    links:
+      - ${CONTAINER_JAVA}
     ports:
       - 8082:80
       - 443:443
