@@ -56,7 +56,7 @@ services:
     image: ${IMAGE_JAVA}
     container_name: ${CONTAINER_JAVA}
     volumes:
-      - $ROOT_PATH/data-server/${CONTAINER_JAVA}/app:$ROOT_PATH/data-server/${CONTAINER_JAVA}/app:rw
+      - $ROOT_PATH/data-server/${CONTAINER_JAVA}/app:/${CONTAINER_JAVA}/app:rw
 #      - /var/run/docker.sock:/var/run/docker.sock
 #      - /usr/bin/docker:/usr/bin/docker
     ports:
@@ -65,13 +65,13 @@ services:
       - ${CONTAINER_REDIS}
 #      - ${CONTAINER_MYSQL}
     environment:
-      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/bin
-    working_dir: $ROOT_PATH/data-server/${CONTAINER_JAVA}/app
+      PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/${CONTAINER_JAVA}/app/bin
+    working_dir: /${CONTAINER_JAVA}/app
     networks:
       base:
     command:
 #       /bin/bash -c "while true;do echo hello docker;sleep 1;done"
-      java -jar app.jar --jeefree.profile=$ROOT_PATH/data-server/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://db地址:对应端口/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=db用户名 --spring.datasource.druid.master.password=db密码
+      java -jar app.jar --jeefree.profile=/${CONTAINER_JAVA}/app/userfile/ --spring.redis.host=${CONTAINER_REDIS} --spring.redis.port=6379 --spring.datasource.druid.master.url=jdbc:mysql://db地址:对应端口/jeefree?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8 --spring.datasource.druid.master.username=db用户名 --spring.datasource.druid.master.password=db密码
 
   # 5. nginx
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
