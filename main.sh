@@ -69,6 +69,11 @@ function logs_one() {
     docker logs -f ${PROJECT_NAME}"-"${STATE} --tail 15
 }
 
+# 进入容器
+function exec_one() {
+    docker exec -it ${PROJECT_NAME}"-"${STATE} /bin/bash
+}
+
 # 推送一个项目docker到仓库
 function push_one() {
   docker tag ${IMAGE_JAVA} ${PUSH_ROOT_REGISTRY}/${PROJECT_NAME}/${PROJECT_NAME}"-"${STATE}
@@ -143,6 +148,9 @@ function printHelp() {
     echo "./main.sh logs [+操作码]：查看日志"
     echo "          [操作码]"
     echo "               指定服务：查看指定日志"
+    echo "./main.sh logs [+操作码]：进入容器"
+    echo "          [操作码]"
+    echo "               指定服务：进入指定容器"
     echo "./main.sh push [+操作码]：推送镜像到仓库"
     echo "          [操作码]"
     echo "               指定服务：推送到指定仓库，当前支持[java]"
@@ -159,6 +167,8 @@ case ${MODE} in
         start_one ;;
     "logs")
         logs_one ;;
+    "exec")
+        exec_one ;;
     "push")
         push_one ;;
     "release")
