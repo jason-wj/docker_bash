@@ -13,7 +13,7 @@ services:
       - $ROOT_PATH/data-server/${CONTAINER_MONGO}/conf:/data/configdb
     command: --wiredTigerCacheSizeGB 3
     ports:
-      - 9091:27017
+      - 27017:27017
     networks:
       base:
 
@@ -31,7 +31,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
       - TZ=Asia/Shanghai
     ports:
-      - 9906:3306
+      - 3306:3306
     networks:
       base:
 
@@ -43,7 +43,7 @@ services:
       - $ROOT_PATH/data-server/${CONTAINER_REDIS}/conf/redis.conf:/etc/redis/redis.conf:rw
       - $ROOT_PATH/data-server/${CONTAINER_REDIS}/data:/data:rw
     ports:
-      - 8890:6379
+      - 6379:6379
     networks:
       base:
     command:
