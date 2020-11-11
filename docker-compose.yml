@@ -47,7 +47,7 @@ services:
     networks:
       base:
     command:
-      redis-server /etc/redis/redis.conf --appendonly yes  --requirepass 123456
+      redis-server /etc/redis/redis.conf --appendonly yes  --requirepass root
 
   # 4. java
   # 需要追加执行目录，无法在已有PATH之后追加，目前能想到的就是PATH重写
