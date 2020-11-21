@@ -27,6 +27,9 @@ services:
       - $ROOT_PATH/data-server/${CONTAINER_MYSQL}/init:/docker-entrypoint-initdb.d/
     command:
       --lower_case_table_names=1
+      --default-authentication-plugin=mysql_native_password
+      --wait_timeout=2880000
+      --max_allowed_packet=41943040
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - TZ=Asia/Shanghai
