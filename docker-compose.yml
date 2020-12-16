@@ -31,10 +31,10 @@ services:
       --wait_timeout=2880000
       --max_allowed_packet=41943040
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=xhmT1ThVUeAMegih
       - TZ=Asia/Shanghai
     ports:
-      - 3306:3306
+      - 9906:3306
     networks:
       base:
 
