@@ -38,6 +38,7 @@ COMMAND_IPFS="ipfs"
 COMMAND_JAVA="java"
 COMMAND_NGINX="nginx"
 COMMAND_PORTAINER="portainer"
+COMMAND_YAPI="yapi"
 
 # 容器版本
 export IMAGE_MONGO="mongo"
@@ -48,6 +49,7 @@ export IMAGE_MQ="rabbitmq:3.8.3-management"
 export IMAGE_JAVA="java:8"
 export IMAGE_NGINX="nginx"
 export IMAGE_PORTAINER="portainer/portainer"
+export IMAGE_YAPI="jayfong/yapi:latest"
 
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
@@ -58,6 +60,7 @@ export CONTAINER_IPFS=${PROJECT_NAME}"-"${COMMAND_IPFS}
 export CONTAINER_JAVA=${PROJECT_NAME}"-"${COMMAND_JAVA}
 export CONTAINER_NGINX=${PROJECT_NAME}"-"${COMMAND_NGINX}
 export CONTAINER_PORTAINER=${PROJECT_NAME}"-"${COMMAND_PORTAINER}
+export CONTAINER_YAPI=${PROJECT_NAME}"-"${COMMAND_YAPI}
 
 # 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then

@@ -8,10 +8,13 @@ services:
   myflag-mongo:
     image: ${IMAGE_MONGO}
     container_name: ${CONTAINER_MONGO}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: jason
+      MONGO_INITDB_ROOT_PASSWORD: jason
     volumes:
       - $ROOT_PATH/data-server/${CONTAINER_MONGO}/db:/data/db
-      - $ROOT_PATH/data-server/${CONTAINER_MONGO}/conf:/data/configdb
-    command: --wiredTigerCacheSizeGB 3
+#      - $ROOT_PATH/data-server/${CONTAINER_MONGO}/conf:/data/configdb
+#    command: --wiredTigerCacheSizeGB 3
     ports:
       - 27017:27017
     networks:
@@ -120,11 +123,11 @@ services:
     networks:
       base:
 
-    #  8. 消息队列
-    # 4369 -- erlang发现口
-    # 5672 -- client端通信口
-    # 15672 -- 管理界面ui端口
-    # 25672 -- server间内部通信口，集群之间
+  #  8. 消息队列
+  # 4369 -- erlang发现口
+  # 5672 -- client端通信口
+  # 15672 -- 管理界面ui端口
+  # 25672 -- server间内部通信口，集群之间
   myflag-mq:
     hostname: localhost
     container_name: ${CONTAINER_MQ}
@@ -150,4 +153,30 @@ services:
 #      - |
 #        rabbitmq-plugins enable rabbitmq_management
 
-
+  # 8. yapi接口管理工具
+  myflag-yapi:
+    image: ${IMAGE_YAPI}
+    container_name: ${CONTAINER_YAPI}
+    environment:
+      - YAPI_ADMIN_ACCOUNT=jason@163.com  # 登入账号
+      - YAPI_ADMIN_PASSWORD=jason123                # 登入密码
+      - YAPI_CLOSE_REGISTER=true                # 关闭注册功能
+      - YAPI_DB_SERVERNAME=myflag-mongo              # mongodb 数据库地址
+      - YAPI_DB_PORT=27017                      # mongodb 端口
+      - YAPI_DB_DATABASE=yapi                   # mongodb 数据库名
+      - YAPI_DB_USER=jason
+      - YAPI_DB_PASS=jason
+      - YAPI_DB_AUTH_SOURCE=admin
+      - YAPI_MAIL_ENABLE=false                  # 不启用邮箱
+      - YAPI_LDAP_LOGIN_ENABLE=false            # 不启用 loap 登入
+      - YAPI_PLUGINS=[]                         # 插件
+    ports:
+      - 3000:3000
+#    working_dir: /api/vendors
+#    volumes:
+#      - $ROOT_PATH/data-server/${CONTAINER_YAPI}/config/config.json:/api/config.json
+#    command: server/app.js
+    depends_on:
+      - ${CONTAINER_MONGO}
+    networks:
+      base:
