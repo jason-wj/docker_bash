@@ -153,7 +153,7 @@ services:
 #      - |
 #        rabbitmq-plugins enable rabbitmq_management
 
-  # 8. yapi接口管理工具
+  # 8. yapi接口管理工具，参考：https://github.com/fjc0k/docker-YApi#readme
   myflag-yapi:
     image: ${IMAGE_YAPI}
     container_name: ${CONTAINER_YAPI}
@@ -172,10 +172,6 @@ services:
       - YAPI_PLUGINS=[]                         # 插件
     ports:
       - 3000:3000
-#    working_dir: /api/vendors
-#    volumes:
-#      - $ROOT_PATH/data-server/${CONTAINER_YAPI}/config/config.json:/api/config.json
-#    command: server/app.js
     depends_on:
       - ${CONTAINER_MONGO}
     networks:
