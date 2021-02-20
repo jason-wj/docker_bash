@@ -41,6 +41,27 @@ services:
     networks:
       base:
 
+  #  2. 全局-关系型数据库mysql
+  myflag-mariadb:
+    image: ${IMAGE_MARIADB}
+    container_name: ${CONTAINER_MARIADB}
+    volumes:
+      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/data:/var/lib/mariadb
+      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/conf:/etc/mysql/conf.d
+      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/init:/docker-entrypoint-initdb.d/
+    command:
+      --lower_case_table_names=1
+      --default-authentication-plugin=mysql_native_password
+      --wait_timeout=2880000
+      --max_allowed_packet=41943040
+    environment:
+      - MYSQL_ROOT_PASSWORD=xhmT1ThVUeAMegih
+      - TZ=Asia/Shanghai
+    ports:
+      - 9907:3306
+    networks:
+      base:
+
   #  3. 全局-缓存 redis
   myflag-redis:
     image: ${IMAGE_REDIS}

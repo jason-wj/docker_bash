@@ -32,6 +32,7 @@ fi
 # 用户级
 COMMAND_MONGO="mongo"
 COMMAND_MYSQL="mysql"
+COMMAND_MARIADB="mariadb"
 COMMAND_REDIS="redis"
 COMMAND_MQ="mq"
 COMMAND_IPFS="ipfs"
@@ -43,6 +44,7 @@ COMMAND_YAPI="yapi"
 # 容器版本
 export IMAGE_MONGO="mongo"
 export IMAGE_MYSQL="mysql:5.7"
+export IMAGE_MARIADB="mariadb:10.3"
 export IMAGE_REDIS="redis"
 export IMAGE_IPFS="ipfs/go-ipfs:latest"
 export IMAGE_MQ="rabbitmq:3.8.3-management"
@@ -54,6 +56,7 @@ export IMAGE_YAPI="jayfong/yapi:latest"
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
 export CONTAINER_MYSQL=${PROJECT_NAME}"-"${COMMAND_MYSQL}
+export CONTAINER_MARIADB=${PROJECT_NAME}"-"${COMMAND_MARIADB}
 export CONTAINER_REDIS=${PROJECT_NAME}"-"${COMMAND_REDIS}
 export CONTAINER_MQ=${PROJECT_NAME}"-"${COMMAND_MQ}
 export CONTAINER_IPFS=${PROJECT_NAME}"-"${COMMAND_IPFS}
