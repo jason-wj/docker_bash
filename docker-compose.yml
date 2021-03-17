@@ -46,9 +46,9 @@ services:
     image: ${IMAGE_MARIADB}
     container_name: ${CONTAINER_MARIADB}
     volumes:
-      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/data:/var/lib/mariadb
+      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/data:/var/lib/mysql
       - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/conf:/etc/mysql/conf.d
-      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/init:/docker-entrypoint-initdb.d/
+#      - $ROOT_PATH/data-server/${CONTAINER_MARIADB}/init:/docker-entrypoint-initdb.d/
     command:
       --lower_case_table_names=1
       --default-authentication-plugin=mysql_native_password
