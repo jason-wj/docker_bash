@@ -110,8 +110,6 @@ services:
 #            - $ROOT_PATH/data-server/${CONTAINER_NGINX}/conf:/etc/nginx/nginx.conf:rw
       - $ROOT_PATH/data-server/${CONTAINER_NGINX}/log:/var/log/nginx:rw
       - $ROOT_PATH/data-server/${CONTAINER_NGINX}/www:/usr/share/nginx/html:rw
-    links:
-      - ${CONTAINER_JAVA}
     ports:
       - 8082:80
       - 443:443
