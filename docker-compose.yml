@@ -13,7 +13,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: jason
     volumes:
       - $ROOT_PATH/data-server/${CONTAINER_MONGO}/db:/data/db
-#      - $ROOT_PATH/data-server/${CONTAINER_MONGO}/conf:/data/configdb
+      - $ROOT_PATH/data-server/${CONTAINER_MONGO}/file:/data/file
 #    command: --wiredTigerCacheSizeGB 3
     ports:
       - 27017:27017
