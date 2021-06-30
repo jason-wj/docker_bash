@@ -197,3 +197,14 @@ services:
       - ${CONTAINER_MONGO}
     networks:
       base:
+
+  # 11. python
+  myflag-python:
+    image: ${IMAGE_PYTHON}
+    container_name: ${CONTAINER_PYTHON}
+    tty: true
+    volumes:
+      - $ROOT_PATH/data-server/${CONTAINER_PYTHON}/data:/docs
+    networks:
+      base:
+

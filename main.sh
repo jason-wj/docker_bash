@@ -40,6 +40,7 @@ COMMAND_JAVA="java"
 COMMAND_NGINX="nginx"
 COMMAND_PORTAINER="portainer"
 COMMAND_YAPI="yapi"
+COMMAND_PYTHON="python"
 
 # 容器版本
 export IMAGE_MONGO="mongo"
@@ -52,6 +53,7 @@ export IMAGE_JAVA="java:8"
 export IMAGE_NGINX="nginx"
 export IMAGE_PORTAINER="portainer/portainer"
 export IMAGE_YAPI="jayfong/yapi:latest"
+export IMAGE_PYTHON="python:3.4"
 
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
@@ -64,6 +66,7 @@ export CONTAINER_JAVA=${PROJECT_NAME}"-"${COMMAND_JAVA}
 export CONTAINER_NGINX=${PROJECT_NAME}"-"${COMMAND_NGINX}
 export CONTAINER_PORTAINER=${PROJECT_NAME}"-"${COMMAND_PORTAINER}
 export CONTAINER_YAPI=${PROJECT_NAME}"-"${COMMAND_YAPI}
+export CONTAINER_PYTHON=${PROJECT_NAME}"-"${COMMAND_PYTHON}
 
 # 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then
