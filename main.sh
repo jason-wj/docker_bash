@@ -41,6 +41,10 @@ COMMAND_NGINX="nginx"
 COMMAND_PORTAINER="portainer"
 COMMAND_YAPI="yapi"
 COMMAND_PYTHON="python"
+COMMAND_CONSUL1="consul1"
+COMMAND_CONSUL2="consul2"
+COMMAND_CONSUL3="consul3"
+COMMAND_CONSUL4="consul4"
 
 # 容器版本
 export IMAGE_MONGO="mongo"
@@ -54,6 +58,7 @@ export IMAGE_NGINX="nginx"
 export IMAGE_PORTAINER="portainer/portainer"
 export IMAGE_YAPI="jayfong/yapi:latest"
 export IMAGE_PYTHON="python:3.4"
+export CONSUL="consul"
 
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
@@ -67,6 +72,10 @@ export CONTAINER_NGINX=${PROJECT_NAME}"-"${COMMAND_NGINX}
 export CONTAINER_PORTAINER=${PROJECT_NAME}"-"${COMMAND_PORTAINER}
 export CONTAINER_YAPI=${PROJECT_NAME}"-"${COMMAND_YAPI}
 export CONTAINER_PYTHON=${PROJECT_NAME}"-"${COMMAND_PYTHON}
+export CONTAINER_CONSUL1=${PROJECT_NAME}"-"${COMMAND_CONSUL1}
+export CONTAINER_CONSUL2=${PROJECT_NAME}"-"${COMMAND_CONSUL2}
+export CONTAINER_CONSUL3=${PROJECT_NAME}"-"${COMMAND_CONSUL3}
+export CONTAINER_CONSUL4=${PROJECT_NAME}"-"${COMMAND_CONSUL4}
 
 # 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then

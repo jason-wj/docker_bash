@@ -21,4 +21,6 @@ ipfs        星际网络存储协议
 portainer   docker可视化管理  
 mq          消息队列  
 yapi        接口管理 
+python      略
+consul      微服务注册和发现，涉及4个容器，集群
 ```
