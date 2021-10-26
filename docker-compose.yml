@@ -208,7 +208,7 @@ services:
     networks:
       base:
 
-  # 12. 微服务-第一个server节点
+  # 12. consul注册发现-第一个节点
   myflag-consul1:
     image: ${CONSUL}
     container_name: ${CONTAINER_CONSUL1}
@@ -218,7 +218,7 @@ services:
     networks:
       base:
 
-  # 13. 微服务-第二个server节点
+  # 13. consul注册发现-第二个节点
   myflag-consul2:
     image: ${CONSUL}
     container_name: ${CONTAINER_CONSUL2}
@@ -230,7 +230,7 @@ services:
     networks:
       base:
 
-  # 14. 微服务-第三个server节点
+  # 14. consul注册发现-第三个节点
   myflag-consul3:
     image: ${CONSUL}
     container_name: ${CONTAINER_CONSUL3}
@@ -242,12 +242,12 @@ services:
     networks:
       base:
 
-  # 15. 微服务-第一个client节点，可以web展示
-  myflag-consul4:
+  # 15. consul注册发现-web可视化
+  myflag-ui:
     image: ${CONSUL}
-    container_name: ${CONTAINER_CONSUL4}
-#    command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_CONSUL4} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui -hcl='acl { enabled=true enable_token_persistence=true default_policy="deny" } '
-    command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_CONSUL4} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui
+    container_name: ${CONTAINER_UI}
+#    command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_UI} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui -hcl='acl { enabled=true enable_token_persistence=true default_policy="deny" } '
+    command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_UI} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui
     ports:
       - 8504:8500
     depends_on:

@@ -22,5 +22,6 @@ portainer   docker可视化管理
 mq          消息队列  
 yapi        接口管理 
 python      略
-consul      微服务注册和发现，涉及4个容器，集群
+consul      微服务注册和发现，涉及4个容器，集群 consul1、consul2、consul3、consului
+etcd        微服务注册和发现，涉及4个容器，集群 etcd1、etcd2、etcd3、etcdui
 ```
