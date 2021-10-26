@@ -255,3 +255,76 @@ services:
       - ${CONTAINER_CONSUL3}
     networks:
       base:
+
+
+  # 16. 微服务etcd-第一个client节点
+  myflag-etcd1:
+    image: ${ETCD}
+    container_name: ${CONTAINER_ETCD1}
+    environment:
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_INITIAL_CLUSTER=${CONTAINER_ETCD1}=http://0.0.0.0:2380
+      - ETCD_NAME=${CONTAINER_ETCD1}
+      - ETCD_DATA_DIR=/opt/bitnami/etcd/data
+    ports:
+      - 2379:2379
+    networks:
+      base:
+
+  # 17. 微服务etcd-第二个client节点
+  myflag-etcd2:
+    image: ${ETCD}
+    container_name: ${CONTAINER_ETCD2}
+    environment:
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_INITIAL_CLUSTER=${CONTAINER_ETCD2}=http://0.0.0.0:2380
+      - ETCD_NAME=${CONTAINER_ETCD2}
+      - ETCD_DATA_DIR=/opt/bitnami/etcd/data
+    ports:
+      - 22379:2379
+    networks:
+      base:
+
+  # 18. 微服务etcd-第三个client节点
+  myflag-etcd3:
+    image: ${ETCD}
+    container_name: ${CONTAINER_ETCD3}
+    environment:
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:32380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_INITIAL_CLUSTER=${CONTAINER_ETCD3}=http://0.0.0.0:2380
+      - ETCD_NAME=${CONTAINER_ETCD3}
+      - ETCD_DATA_DIR=/opt/bitnami/etcd/data
+    ports:
+      - 32379:2379
+    networks:
+      base:
+
+  # 19. etcdui管理
+  myflag-etcdui:
+    image: ${ETCDUI}
+    container_name: ${CONTAINER_ETCDUI}
+    environment:
+      HOST: "0.0.0.0"
+    ports:
+      - 2300:8080
+    depends_on:
+      - ${CONTAINER_ETCD1}
+      - ${CONTAINER_ETCD2}
+      - ${CONTAINER_ETCD3}
+#    command: ./e3w -conf /app/conf/config.default.ini
+#    volumes:
+#      - "/var/docker/e3w/conf/config.ini:/app/conf/config.default.ini"
+    networks:
+      base:
