@@ -41,7 +41,7 @@ services:
     networks:
       base:
 
-  #  2. 全局-关系型数据库mysql
+  #  2. 全局-关系型数据库mysql，innodb配置主要是为了防止还原大量数据时造成的崩溃
   myflag-mariadb:
     image: ${IMAGE_MARIADB}
     container_name: ${CONTAINER_MARIADB}
@@ -54,6 +54,10 @@ services:
       --default-authentication-plugin=mysql_native_password
       --wait_timeout=2880000
       --max_allowed_packet=41943040
+      --innodb_buffer_pool_size=4G
+      --innodb_log_buffer_size=256M
+      --innodb_log_file_size=1G
+      --innodb_write_io_threads=16
     environment:
       - MYSQL_ROOT_PASSWORD=xhmT1ThVUeAMegih
       - TZ=Asia/Shanghai
