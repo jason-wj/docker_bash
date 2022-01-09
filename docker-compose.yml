@@ -343,5 +343,6 @@ services:
     volumes:
       - $ROOT_PATH/data-server/${CONTAINER_ARBNODE}/data:/home/user/.arbitrum/rinkeby
     command: --l1.url=https://l1-rinkeby-node:8545
+#    command: --l1.url=https://l1-node:8545
     networks:
       base:
