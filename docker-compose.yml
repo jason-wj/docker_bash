@@ -214,7 +214,7 @@ services:
 
   # 12. consul注册发现-第一个节点
   myflag-consul1:
-    image: ${CONSUL}
+    image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_CONSUL1}
     command: agent -server -bootstrap-expect=3 -node=${CONTAINER_CONSUL1} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1
     ports:
@@ -224,7 +224,7 @@ services:
 
   # 13. consul注册发现-第二个节点
   myflag-consul2:
-    image: ${CONSUL}
+    image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_CONSUL2}
     command: agent -server -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_CONSUL2} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1
     depends_on:
@@ -236,7 +236,7 @@ services:
 
   # 14. consul注册发现-第三个节点
   myflag-consul3:
-    image: ${CONSUL}
+    image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_CONSUL3}
     command: agent -server -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_CONSUL3} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1
     depends_on:
@@ -248,7 +248,7 @@ services:
 
   # 15. consul注册发现-web可视化
   myflag-ui:
-    image: ${CONSUL}
+    image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_UI}
 #    command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_UI} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui -hcl='acl { enabled=true enable_token_persistence=true default_policy="deny" } '
     command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_UI} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui
@@ -263,7 +263,7 @@ services:
 
   # 16. 微服务etcd-第一个client节点
   myflag-etcd1:
-    image: ${ETCD}
+    image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD1}
     environment:
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
@@ -281,7 +281,7 @@ services:
 
   # 17. 微服务etcd-第二个client节点
   myflag-etcd2:
-    image: ${ETCD}
+    image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD2}
     environment:
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
@@ -299,7 +299,7 @@ services:
 
   # 18. 微服务etcd-第三个client节点
   myflag-etcd3:
-    image: ${ETCD}
+    image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD3}
     environment:
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
@@ -317,7 +317,7 @@ services:
 
   # 19. etcdui管理
   myflag-etcdui:
-    image: ${ETCDUI}
+    image: ${IMAGE_ETCDUI}
     container_name: ${CONTAINER_ETCDUI}
     environment:
       HOST: "0.0.0.0"
@@ -330,5 +330,18 @@ services:
 #    command: ./e3w -conf /app/conf/config.default.ini
 #    volumes:
 #      - "/var/docker/e3w/conf/config.ini:/app/conf/config.default.ini"
+    networks:
+      base:
+
+  # 20. arbitrum测试节点
+  myflag-arbnode:
+    image: ${IMAGE_ARBNODE}
+    container_name: ${CONTAINER_ARBNODE}
+    ports:
+      - 0.0.0.0:8547:8547
+      - 0.0.0.0:8548:8548
+    volumes:
+      - $ROOT_PATH/data-server/${CONTAINER_ARBNODE}/data:/home/user/.arbitrum/rinkeby
+    command: --l1.url=https://l1-rinkeby-node:8545
     networks:
       base:

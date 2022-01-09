@@ -49,6 +49,7 @@ COMMAND_ETCD1="etcd1"
 COMMAND_ETCD2="etcd2"
 COMMAND_ETCD3="etcd3"
 COMMAND_ETCDUI="etcdui"
+COMMAND_ARBNODE="arbnode"
 
 # 容器版本
 export IMAGE_MONGO="mongo"
@@ -62,9 +63,10 @@ export IMAGE_NGINX="nginx"
 export IMAGE_PORTAINER="portainer/portainer"
 export IMAGE_YAPI="jayfong/yapi:latest"
 export IMAGE_PYTHON="python:3.4"
-export CONSUL="consul"
-export ETCD="bitnami/etcd:latest"
-export ETCDUI="evildecay/etcdkeeper"
+export IMAGE_CONSUL="consul"
+export IMAGE_ETCD="bitnami/etcd:latest"
+export IMAGE_ETCDUI="evildecay/etcdkeeper"
+export IMAGE_ARBNODE="offchainlabs/arb-node:v1.1.2-cffb3a0"
 
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
@@ -86,6 +88,7 @@ export CONTAINER_ETCD1=${PROJECT_NAME}"-"${COMMAND_ETCD1}
 export CONTAINER_ETCD2=${PROJECT_NAME}"-"${COMMAND_ETCD2}
 export CONTAINER_ETCD3=${PROJECT_NAME}"-"${COMMAND_ETCD3}
 export CONTAINER_ETCDUI=${PROJECT_NAME}"-"${COMMAND_ETCDUI}
+export CONTAINER_ARBNODE=${PROJECT_NAME}"-"${COMMAND_ARBNODE}
 
 # 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then
