@@ -273,7 +273,7 @@ services:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ROOT_PASSWORD=f7JwtxdocupbAQPr
       - ETCD_INITIAL_CLUSTER=${CONTAINER_ETCD1}=http://0.0.0.0:2380
-      - ETCD_NAME=${CONTAINER_ETCD1}
+      - ETCD_NAME=etcd1
       - ETCD_DATA_DIR=/opt/bitnami/etcd/data
     ports:
       - 2379:2379
@@ -292,7 +292,7 @@ services:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ROOT_PASSWORD=f7JwtxdocupbAQPr
       - ETCD_INITIAL_CLUSTER=${CONTAINER_ETCD2}=http://0.0.0.0:2380
-      - ETCD_NAME=${CONTAINER_ETCD2}
+      - ETCD_NAME=etcd2
       - ETCD_DATA_DIR=/opt/bitnami/etcd/data
     ports:
       - 22379:2379
@@ -311,7 +311,7 @@ services:
       - ALLOW_NONE_AUTHENTICATION=yes
       - ETCD_ROOT_PASSWORD=f7JwtxdocupbAQPr
       - ETCD_INITIAL_CLUSTER=${CONTAINER_ETCD3}=http://0.0.0.0:2380
-      - ETCD_NAME=${CONTAINER_ETCD3}
+      - ETCD_NAME=etcd3
       - ETCD_DATA_DIR=/opt/bitnami/etcd/data
     ports:
       - 32379:2379
