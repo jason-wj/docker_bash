@@ -1,15 +1,18 @@
 # docker_bash
+通过docker-compose和shell，简化docker容器管理的一些快捷使用操作。
+无论在linux、mac、windows(git bash) 均可以便捷操作docker容器，方便程序猿开发和测试项目。
 
-#### 介绍
-编排了一些常用的docker镜像，脚本中的容器是测试案例，用于参考
+## 地址
+[docker_bash 码云](https://gitee.com/jason-wj/docker_bash)
+[docker_bash Github](https://github.com/jason-wj/docker_bash)
 
-#### 软件架构
+## 软件架构
 必须先安装docker和docker-compose
 
-#### 使用前须知
+## 使用前须知
 需要将`main.sh`和`docker-compose.yml`中的`flag`改为自定义的项目名称，若不改，则默认项目名为：`myflag`。
 
-#### 使用方式
+## 使用方式
 1. 可以配置环境变量，方便全局快速启动
 ```shell
 # docker 快捷入口
@@ -30,7 +33,7 @@ main.sh logs mariadb
 main.sh release mariadb
 ```
 
-#### 支持镜像
+## 支持镜像
 ```text
 mongo       略  
 mysql       略  
