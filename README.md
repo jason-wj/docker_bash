@@ -1,5 +1,5 @@
 # docker_bash
-通过docker-compose和shell，简化docker容器管理的一些快捷使用操作。
+通过docker-compose和shell，简化docker容器管理的一些快捷使用操作（如启动、停止等）。
 无论在linux、mac、windows(git bash) 均可以便捷操作docker容器，方便程序猿开发和测试项目。
 
 ## 地址
@@ -10,8 +10,8 @@
 必须先安装docker和docker-compose
 
 ## 使用前须知
-默认项目名称为：x，不建议修改名称  
-如果非要变更名称：则需要将`main.sh`和`docker-compose.yml`中的`flag`改为自定义的项目名称`x`
+默认项目名称为：`x`，不建议修改名称  
+如果非要变更名称：则需要将`main.sh`和`docker-compose.yml`中的`x`改为自定义的项目名称
 
 ## 使用方式
 1. 可以配置环境变量，方便全局快速启动
