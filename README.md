@@ -7,7 +7,28 @@
 必须先安装docker和docker-compose
 
 #### 使用前须知
-需要将`main.sh`和`docker-compose.yml`中的`flag`改为自定义的项目名称。
+需要将`main.sh`和`docker-compose.yml`中的`flag`改为自定义的项目名称，若不改，则默认项目名为：`myflag`。
+
+#### 使用方式
+1. 可以配置环境变量，方便全局快速启动
+```shell
+# docker 快捷入口
+export PATH=/xxx/docker_bash:$PATH
+# docker-compose.yml 文件所在目录
+export DOCKER_COMPOSE_PATH=/xxx/docker_bash/
+```
+2. 启动所需镜像
+以mariadb为例
+```shell
+# 启动
+main.sh start mariadb
+
+# 查看容器日志
+main.sh logs mariadb
+
+# 停止容器
+main.sh release mariadb
+```
 
 #### 支持镜像
 ```text
