@@ -10,7 +10,8 @@
 必须先安装docker和docker-compose
 
 ## 使用前须知
-需要将`main.sh`和`docker-compose.yml`中的`flag`改为自定义的项目名称，若不改，则默认项目名为：`myflag`。
+默认项目名称为：x，不建议修改名称  
+如果非要变更名称：则需要将`main.sh`和`docker-compose.yml`中的`flag`改为自定义的项目名称`x`
 
 ## 使用方式
 1. 可以配置环境变量，方便全局快速启动
