@@ -5,7 +5,7 @@ networks:
 
 services:
   # 1. 全局-nosql数据库mongodb
-  myflag-mongo:
+  x-mongo:
     image: ${IMAGE_MONGO}
     container_name: ${CONTAINER_MONGO}
     environment:
@@ -21,7 +21,7 @@ services:
       base:
 
   #  2. 全局-关系型数据库mysql
-  myflag-mysql:
+  x-mysql:
     image: ${IMAGE_MYSQL}
     container_name: ${CONTAINER_MYSQL}
     volumes:
@@ -42,7 +42,7 @@ services:
       base:
 
   #  2. 全局-关系型数据库mysql，innodb配置主要是为了防止还原大量数据时造成的崩溃
-  myflag-mariadb:
+  x-mariadb:
     image: ${IMAGE_MARIADB}
     container_name: ${CONTAINER_MARIADB}
     volumes:
@@ -67,7 +67,7 @@ services:
       base:
 
   #  3. 全局-缓存 redis
-  myflag-redis:
+  x-redis:
     image: ${IMAGE_REDIS}
     container_name: ${CONTAINER_REDIS}
     volumes:
@@ -83,7 +83,7 @@ services:
   # 4. java
   # 需要追加执行目录，无法在已有PATH之后追加，目前能想到的就是PATH重写
   # 若需要使用容器mysql，则 links中将mysql注释取消
-  myflag-java:
+  x-java:
     image: ${IMAGE_JAVA}
     container_name: ${CONTAINER_JAVA}
     volumes:
@@ -106,7 +106,7 @@ services:
 
   # 5. nginx
   # 注意：volumes中的conf.d需要设置配置文件时再开放，配置文件可参考data-server中对应目录已提供的
-  myflag-nginx:
+  x-nginx:
     image: ${IMAGE_NGINX}
     container_name: ${CONTAINER_NGINX}
     volumes:
@@ -123,7 +123,7 @@ services:
       base:
 
   #  6. ipfs单节点
-  myflag-ipfs:
+  x-ipfs:
     image: ${IMAGE_IPFS}
     container_name: ${CONTAINER_IPFS}
     volumes:
@@ -137,7 +137,7 @@ services:
       base:
 
   # 7. docker管理工具
-  myflag-portainer:
+  x-portainer:
     image: ${IMAGE_PORTAINER}
     container_name: ${CONTAINER_PORTAINER}
     ports:
@@ -153,7 +153,7 @@ services:
   # 5672 -- client端通信口
   # 15672 -- 管理界面ui端口
   # 25672 -- server间内部通信口，集群之间
-  myflag-mq:
+  x-mq:
     hostname: localhost
     container_name: ${CONTAINER_MQ}
     environment:
@@ -179,14 +179,14 @@ services:
 #        rabbitmq-plugins enable rabbitmq_management
 
   # 8. yapi接口管理工具，参考：https://github.com/fjc0k/docker-YApi#readme
-  myflag-yapi:
+  x-yapi:
     image: ${IMAGE_YAPI}
     container_name: ${CONTAINER_YAPI}
     environment:
       - YAPI_ADMIN_ACCOUNT=jason@163.com  # 登入账号
       - YAPI_ADMIN_PASSWORD=jason123                # 登入密码
       - YAPI_CLOSE_REGISTER=true                # 关闭注册功能
-      - YAPI_DB_SERVERNAME=myflag-mongo              # mongodb 数据库地址
+      - YAPI_DB_SERVERNAME=x-mongo              # mongodb 数据库地址
       - YAPI_DB_PORT=27017                      # mongodb 端口
       - YAPI_DB_DATABASE=yapi                   # mongodb 数据库名
       - YAPI_DB_USER=jason
@@ -203,7 +203,7 @@ services:
       base:
 
   # 11. python
-  myflag-python:
+  x-python:
     image: ${IMAGE_PYTHON}
     container_name: ${CONTAINER_PYTHON}
     tty: true
@@ -213,7 +213,7 @@ services:
       base:
 
   # 12. consul注册发现-第一个节点
-  myflag-consul1:
+  x-consul1:
     image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_CONSUL1}
     command: agent -server -bootstrap-expect=3 -node=${CONTAINER_CONSUL1} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1
@@ -223,7 +223,7 @@ services:
       base:
 
   # 13. consul注册发现-第二个节点
-  myflag-consul2:
+  x-consul2:
     image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_CONSUL2}
     command: agent -server -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_CONSUL2} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1
@@ -235,7 +235,7 @@ services:
       base:
 
   # 14. consul注册发现-第三个节点
-  myflag-consul3:
+  x-consul3:
     image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_CONSUL3}
     command: agent -server -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_CONSUL3} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1
@@ -247,7 +247,7 @@ services:
       base:
 
   # 15. consul注册发现-web可视化
-  myflag-ui:
+  x-ui:
     image: ${IMAGE_CONSUL}
     container_name: ${CONTAINER_UI}
 #    command: agent -retry-join=${CONTAINER_CONSUL1} -node=${CONTAINER_UI} -bind=0.0.0.0 -client=0.0.0.0 -datacenter=dc1 -ui -hcl='acl { enabled=true enable_token_persistence=true default_policy="deny" } '
@@ -262,7 +262,7 @@ services:
 
 
   # 16. 微服务etcd-第一个client节点
-  myflag-etcd1:
+  x-etcd1:
     image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD1}
     environment:
@@ -282,7 +282,7 @@ services:
       base:
 
   # 17. 微服务etcd-第二个client节点
-  myflag-etcd2:
+  x-etcd2:
     image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD2}
     environment:
@@ -302,7 +302,7 @@ services:
       base:
 
   # 18. 微服务etcd-第三个client节点
-  myflag-etcd3:
+  x-etcd3:
     image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD3}
     environment:
@@ -322,7 +322,7 @@ services:
       base:
 
   # 19. etcdui管理
-  myflag-etcdui:
+  x-etcdui:
     image: ${IMAGE_ETCDUI}
     container_name: ${CONTAINER_ETCDUI}
     environment:
@@ -340,7 +340,7 @@ services:
       base:
 
   # 20. arbitrum测试节点
-  myflag-arbnode:
+  x-arbnode:
     image: ${IMAGE_ARBNODE}
     container_name: ${CONTAINER_ARBNODE}
     ports:

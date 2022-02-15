@@ -3,8 +3,8 @@
 MODE=$1
 STATE=$2
 
-# 项目名(根据项目改，同时需要改掉docker-compose.yml中的myflag)
-PROJECT_NAME=myflag
+# 项目名(根据项目改，同时需要改掉docker-compose.yml中的)
+PROJECT_NAME=x
 
 # 项目模式：开发-dev、生产-prod
 # 当 使用到了传到仓库的自定义镜像的时候，需要切换为prod，否则默认dev即可
