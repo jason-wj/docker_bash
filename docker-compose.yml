@@ -352,3 +352,12 @@ services:
 #    command: --l1.url=https://l1-node:8545
     networks:
       base:
+  # 21. dtm测试专用
+  x-dtm:
+    image: ${IMAGE_DTM}
+    container_name: ${CONTAINER_DTM}
+    ports:
+      - 0.0.0.0:36789:36789
+      - 0.0.0.0:36790:36790
+    networks:
+      base:

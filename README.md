@@ -50,4 +50,5 @@ python      略
 consul      微服务注册和发现，涉及4个容器，集群 consul1、consul2、consul3、consului
 etcd        微服务注册和发现，涉及4个容器，集群 etcd1、etcd2、etcd3、etcdui
 arbnode     arbitrum节点，可配置连接来变更测试和正式节点
+dtm         分布式事务锁
 ```
