@@ -354,10 +354,12 @@ services:
       base:
   # 21. dtm测试专用
   x-dtm:
-    image: yedf/dtm:latest
-    container_name: x-dtm
+    image: ${IMAGE_DTM}
+    container_name: ${CONTAINER_DTM}
     environment:
-      IS_DOCKER: "1"
+      IS_DOCKER: 1
     ports:
-      - "36789:36789"
-      - "36790:36790"
+      - 0.0.0.0:36789:36789
+      - 0.0.0.0:36790:36790
+    networks:
+      base:
