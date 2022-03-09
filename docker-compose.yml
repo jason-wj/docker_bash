@@ -360,6 +360,9 @@ services:
       - 'host.docker.internal:host-gateway'
     environment:
       IS_DOCKER: 1
+      MICRO_SERVICE_END_POINT: "0.0.0.0:36790"
+      MICRO_SERVICE_Target: "etcd://${CONTAINER_ETCD1}:2379/dtmservice"
+      MICRO_SERVICE_Driver: "dtm-driver-gozero"
     ports:
       - 0.0.0.0:36789:36789
       - 0.0.0.0:36790:36790
