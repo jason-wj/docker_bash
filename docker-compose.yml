@@ -356,8 +356,6 @@ services:
   x-dtm:
     image: ${IMAGE_DTM}
     container_name: ${CONTAINER_DTM}
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
     environment:
       IS_DOCKER: 1
     ports:
