@@ -68,7 +68,7 @@ export IMAGE_CONSUL="consul"
 export IMAGE_ETCD="bitnami/etcd:latest"
 export IMAGE_ETCDUI="evildecay/etcdkeeper"
 export IMAGE_ARBNODE="offchainlabs/arb-node:v1.1.2-cffb3a0"
-export IMAGE_DTM="yedf/dtm:1.12.2"
+export IMAGE_DTM="yedf/dtm:latest"
 
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
