@@ -261,12 +261,12 @@ services:
       base:
 
 
-  # 16. 微服务etcd-第一个client节点,ETCD_ADVERTISE_CLIENT_URLS配置在测试期间，设置为0.0.0.0，可以避免go-zero框架访问异常，生产环境建议根据实际地址输入
+  # 16. 微服务etcd-第一个client节点
   x-etcd1:
     image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD1}
     environment:
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://${CONTAINER_ETCD1}:2379
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://${CONTAINER_ETCD1}:2380
@@ -286,7 +286,7 @@ services:
     image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD2}
     environment:
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://${CONTAINER_ETCD2}:2379
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://${CONTAINER_ETCD2}:2380
@@ -306,7 +306,7 @@ services:
     image: ${IMAGE_ETCD}
     container_name: ${CONTAINER_ETCD3}
     environment:
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://${CONTAINER_ETCD3}:2379
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
       - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://${CONTAINER_ETCD3}:2380
@@ -352,7 +352,7 @@ services:
 #    command: --l1.url=https://l1-node:8545
     networks:
       base:
-  # 21. dtm测试专用，其中extra_hosts必须有，否则无法访问
+  # 21. dtm测试专用，其中extra_hosts必须有，否则无法访问.dtm官方提供的容器版本不稳定，对容器网络支持不足，目前还是建议在主机直接部署测试
   x-dtm:
     image: ${IMAGE_DTM}
     container_name: ${CONTAINER_DTM}
