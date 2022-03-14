@@ -352,16 +352,16 @@ services:
 #    command: --l1.url=https://l1-node:8545
     networks:
       base:
-  # 21. dtm测试专用，其中extra_hosts必须有，否则无法访问.dtm官方提供的容器版本不稳定，对容器网络支持不足，目前还是建议在主机直接部署测试
-  x-dtm:
-    image: ${IMAGE_DTM}
-    container_name: ${CONTAINER_DTM}
+  # 21. dtf测试专用，其中extra_hosts必须有，否则无法访问.dtf官方提供的容器版本不稳定，对容器网络支持不足，目前还是建议在主机直接部署测试
+  x-dtf:
+    image: ${IMAGE_DTF}
+    container_name: ${CONTAINER_DTF}
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     environment:
       IS_DOCKER: 1
       MICRO_SERVICE_END_POINT: "0.0.0.0:36790"
-      MICRO_SERVICE_TARGET: "etcd://${CONTAINER_ETCD1}:2379/dtmservice"
+      MICRO_SERVICE_TARGET: "etcd://${CONTAINER_ETCD1}:2379/dtfservice"
       MICRO_SERVICE_DRIVER: "dtm-driver-gozero"
     ports:
       - 0.0.0.0:36789:36789
