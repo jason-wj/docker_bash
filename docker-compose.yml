@@ -375,5 +375,13 @@ services:
     container_name: ${CONTAINER_YNODE}
     ports:
       - 0.0.0.0:9000:3001
+    volumes:
+      - $ROOT_PATH/data-server/${CONTAINER_YNODE}/data:/data/
     networks:
       base:
+    command:
+      - /bin/sh
+      - -c
+      - |
+        cd /data
+        NODE_ENV=production node ./web/index.js
