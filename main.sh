@@ -51,6 +51,7 @@ COMMAND_ETCD3="etcd3"
 COMMAND_ETCDUI="etcdui"
 COMMAND_ARBNODE="arbnode"
 COMMAND_DTF="dtf"
+COMMAND_YNODE="ynode"
 
 # 容器版本
 export IMAGE_MONGO="mongo"
@@ -69,6 +70,7 @@ export IMAGE_ETCD="bitnami/etcd:latest"
 export IMAGE_ETCDUI="evildecay/etcdkeeper"
 export IMAGE_ARBNODE="offchainlabs/arb-node:v1.1.2-cffb3a0"
 export IMAGE_DTF="yedf/dtm:latest"
+export IMAGE_YNODE="jitesoft/node-yarn"
 
 # container：必须保留，当一个容器涉及到多个依赖时，方便选择加入
 export CONTAINER_MONGO=${PROJECT_NAME}"-"${COMMAND_MONGO}
@@ -92,6 +94,7 @@ export CONTAINER_ETCD3=${PROJECT_NAME}"-"${COMMAND_ETCD3}
 export CONTAINER_ETCDUI=${PROJECT_NAME}"-"${COMMAND_ETCDUI}
 export CONTAINER_ARBNODE=${PROJECT_NAME}"-"${COMMAND_ARBNODE}
 export CONTAINER_DTF=${PROJECT_NAME}"-"${COMMAND_DTF}
+export CONTAINER_YNODE=${PROJECT_NAME}"-"${COMMAND_YNODE}
 
 # 根据不同项目模式切换镜像，同时
 if [[ ${PROJECT_MODE} == "prod" ]]; then

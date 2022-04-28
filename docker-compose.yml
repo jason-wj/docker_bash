@@ -368,3 +368,12 @@ services:
       - 0.0.0.0:36790:36790
     networks:
       base:
+
+  # 22. yarn-node环境，nodejs后端部署
+  x-ynode:
+    image: ${IMAGE_YNODE}
+    container_name: ${CONTAINER_YNODE}
+    ports:
+      - 0.0.0.0:9000:3001
+    networks:
+      base:
