@@ -186,7 +186,7 @@ function printHelp() {
     echo "./main.sh logs [+操作码]：查看日志"
     echo "          [操作码]"
     echo "               指定服务：查看指定日志"
-    echo "./main.sh logs [+操作码]：进入容器"
+    echo "./main.sh exec [+操作码]：进入容器"
     echo "          [操作码]"
     echo "               指定服务：进入指定容器"
     echo "./main.sh push [+操作码]：推送镜像到仓库"
